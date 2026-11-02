@@ -107,7 +107,7 @@ h1,h2,p{margin:0}
 
 .app{max-width:520px;margin:0 auto;padding-block:8px 128px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 .view{display:flex;flex-direction:column;gap:28px}
-.page-t{font-size:24px;font-weight:300;letter-spacing:-.025em;line-height:1.25;min-height:48px;display:flex;align-items:center}
+.page-t{font-size:24px;font-weight:400;letter-spacing:-.025em;line-height:1.25;min-height:48px;display:flex;align-items:center}
 .ti{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* write */
@@ -116,7 +116,7 @@ h1,h2,p{margin:0}
 .step{position:relative;flex:none;width:36px;height:36px;border-radius:50%;background:transparent;border:1px solid var(--line);color:var(--ink);display:grid;place-items:center}
 .step::after{content:"";position:absolute;inset:-4px}
 .step:disabled{opacity:.35;cursor:default}
-.stamp{flex:1;min-width:0;font-size:24px;font-weight:300;letter-spacing:-.02em;line-height:1.25}
+.stamp{flex:1;min-width:0;font-size:24px;font-weight:400;letter-spacing:-.02em;line-height:1.25;color:var(--ink);-webkit-font-smoothing:antialiased}
 .done{display:none;min-height:36px;padding:0 16px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600}
 body.typing .done{display:inline-flex;align-items:center}
 .streak{font-size:12px;font-weight:600;color:var(--on-a);background:var(--a-yellow);padding:2px 10px;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}
@@ -182,7 +182,7 @@ body.typing .done{display:inline-flex;align-items:center}
 
 /* archive */
 .cal-head{display:flex;align-items:center;gap:6px;min-height:48px;margin-bottom:8px}
-.cal-title{flex:1;min-width:0;font-size:24px;font-weight:300;letter-spacing:-.02em}
+.cal-title{flex:1;min-width:0;font-size:24px;font-weight:400;letter-spacing:-.02em;-webkit-font-smoothing:antialiased}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0}
 .wd{font-size:12px;color:var(--ink-soft);text-align:center;padding:8px 0 4px}
 .day{position:relative;height:48px;display:flex;justify-content:center;padding-top:4px;font-variant-numeric:tabular-nums}
