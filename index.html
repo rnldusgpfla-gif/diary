@@ -125,6 +125,11 @@ body.typing .done{display:inline-flex;align-items:center}
 .rule-s{display:block;width:32px;height:1px;background:var(--hair);margin-top:14px}
 .note{font-size:13px;color:var(--ink-soft);line-height:1.45}
 .sheet{display:flex;flex-direction:column;gap:14px}
+.sheet.swipe-l{animation:swl .22s ease-out}
+.sheet.swipe-r{animation:swr .22s ease-out}
+@keyframes swl{from{opacity:.2;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes swr{from{opacity:.2;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.sheet.swipe-l,.sheet.swipe-r{animation:none}}
 .title{width:100%;-webkit-appearance:none;appearance:none;border:0;border-radius:0;background:transparent;color:var(--ink);font-family:var(--w-font);font-weight:var(--w-tw);font-size:var(--w-size);letter-spacing:var(--w-track);line-height:1.6;padding:0}
 .title::placeholder,.paper::placeholder{color:var(--ink-soft);opacity:1;font-weight:400}
 .paper{display:block;width:100%;flex:1 1 auto;min-height:240px;border:0;border-radius:0;resize:none;overflow:hidden;background-color:transparent;color:var(--ink);font-family:var(--w-font);font-weight:400;font-size:var(--w-size);letter-spacing:var(--w-track);line-height:var(--w-lh);padding:0}
@@ -1323,6 +1328,31 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (editKey >= todayKey()) return;
     flush(); editKey = shift(editKey, 1); loadDraft(); renderWrite();
   });
+
+  /* swipe left/right on the writing screen: right = the day before, left = the next day */
+  (function () {
+    var sx = 0, sy = 0, st = 0, on = false;
+    var view = $('#v-write');
+    view.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1 || e.target.closest('.ph, .lb, .tagrow, #tagSuggestWrap')) { on = false; return; }
+      on = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
+    }, { passive: true });
+    view.addEventListener('touchend', function (e) {
+      if (!on) return;
+      on = false;
+      var t = e.changedTouches[0];
+      var dx = t.clientX - sx, dy = t.clientY - sy;
+      if (Date.now() - st > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 2) return;
+      var sel = window.getSelection && window.getSelection();
+      if (sel && String(sel).length) return;
+      var go = dx > 0 ? -1 : 1;
+      if (go > 0 && editKey >= todayKey()) return;
+      flush(); editKey = shift(editKey, go); loadDraft(); renderWrite();
+      var sh = $('#v-write .sheet');
+      sh.classList.remove('swipe-l', 'swipe-r'); void sh.offsetWidth;
+      sh.classList.add(go > 0 ? 'swipe-l' : 'swipe-r');
+    }, { passive: true });
+  })();
 
   $('#title').addEventListener('input', function (e) { draft.title = e.target.value; schedule(); });
   $('#title').addEventListener('keydown', function (e) {
