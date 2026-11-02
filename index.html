@@ -393,6 +393,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <p>저장한 일기가 노션 '💻 다이어리' 표의 같은 날짜 줄에 자동으로 들어가요. 본문은 그 날 페이지에, 첫 줄과 태그는 summary·태그 칸에 담겨요.</p>
       <p id="pending" class="cap"></p>
       <button type="button" class="btn" id="notionBtn" hidden>지금 보내기</button>
+      <button type="button" class="btn" id="nForce" hidden></button>
       <p class="cap" id="notionMsg"></p>
       <details class="n-set">
         <summary>연결 설정</summary>
@@ -1592,6 +1593,9 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#notionPill').textContent = nReady() ? '연결됨' : '연결 안 됨';
     $('#notionBtn').hidden = !nReady();
     $('#nUrl').value = nCfg.url; $('#nKey').value = nCfg.key;
+    var skip = Object.keys(entries).filter(function (k) { return entries[k].notionSkip; });
+    $('#nForce').hidden = !(nReady() && skip.length);
+    $('#nForce').textContent = skip.length ? '노션에 이미 글이 있던 ' + skip.length + '일을 내 일기로 덮어쓰기' : '';
   }
   function syncOne(k) {
     var e = entries[k], stamp = e.updatedAt;
@@ -1637,10 +1641,17 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     }, function (e) {
       var c = e && e.code;
       setNotionMsg(c === 'http_401' ? '연결 키가 맞지 않아요. 연결 설정을 확인해 주세요.' : '보내지 못했어요 (' + (c || '') + (e && e.message ? ' ' + e.message : '') + '). 다음에 다시 시도해요.');
-    }).then(function () { nBusy = false; renderMore(); });
+    }).then(function () { nBusy = false; renderMore(); renderNotionCard(); });
   }
   function scheduleNotion() { clearTimeout(nTimer); nTimer = setTimeout(function () { notionSync(false); }, 4000); }
   $('#notionBtn').addEventListener('click', function () { notionSync(true); });
+  $('#nForce').addEventListener('click', function () {
+    Object.keys(entries).forEach(function (k) {
+      var e = entries[k];
+      if (e.notionSkip) { e.notionSkip = false; e.synced = false; e.notionId = e.notionId || 'overwrite'; }
+    });
+    persist(); renderNotionCard(); notionSync(true);
+  });
   $('#nSave').addEventListener('click', function () {
     nCfg.url = $('#nUrl').value.trim(); nCfg.key = $('#nKey').value.trim();
     try { localStorage.setItem(NKEY, JSON.stringify(nCfg)); } catch (e) {}
