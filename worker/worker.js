@@ -7,7 +7,7 @@
     DATABASE_ID   (Text)    a4ae47a9d4b24d8da934b9aeba406de8  (💻 다이어리 표)
     ALLOW_ORIGIN  (Text)    https://rnldusgpfla-gif.github.io  (앱 주소. 비워 두면 어디서나 허용)
 
-  앱이 POST /sync 로 {date, body, summary, tags, owned} 를 보내면
+  앱이 POST /sync 로 {date, body, summary, tags, rating, owned} 를 보내면
   같은 날짜 줄을 찾아(없으면 만들고) 본문·summary·태그를 채워요.
   노션에서 직접 글을 써 둔 날(owned=false 이고 페이지가 비어 있지 않음)은 건드리지 않고 skipped 로 답해요.
 */
@@ -85,7 +85,8 @@ export default {
       await notion(`/v1/pages/${pageId}`, 'PATCH', {
         properties: {
           summary: { rich_text: text(String(p.summary || '').slice(0, 2000)) },
-          '태그': { rich_text: text(String(p.tags || '').slice(0, 2000)) }
+          '태그': { rich_text: text(String(p.tags || '').slice(0, 2000)) },
+          ...('rating' in p ? { '별점': { number: Number(p.rating) > 0 ? Math.min(5, Number(p.rating)) : null } } : {})
         }
       });
       return out({ ok: true, pageId });

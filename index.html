@@ -124,6 +124,16 @@ body.typing .done{display:inline-flex;align-items:center}
 .quote{color:var(--ink-soft);min-width:0}
 .rule-s{display:block;width:32px;height:1px;background:var(--hair);margin-top:14px}
 .note{font-size:13px;color:var(--ink-soft);line-height:1.45}
+.rate-row{display:flex;align-items:center;gap:10px;margin-top:10px}
+.rate{position:relative;width:160px;height:32px;touch-action:none;cursor:pointer;-webkit-user-select:none;user-select:none;flex:none}
+.rate:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
+.rate-base,.rate-fill{position:absolute;inset:0 auto 0 0;display:flex;height:32px;overflow:hidden;pointer-events:none}
+.rate-base{width:160px}
+.rate svg{flex:none;width:32px;height:32px;padding:2px}
+.rate-base svg{fill:color-mix(in srgb,var(--ink) 12%,transparent)}
+.rate-fill svg{fill:#F5C542}
+.rate-val{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;min-width:3ch}
+.row-r{color:var(--on-a);font-weight:600}
 .sheet{display:flex;flex-direction:column;gap:14px}
 .sheet.swipe-l{animation:swl .22s ease-out}
 .sheet.swipe-r{animation:swr .22s ease-out}
@@ -326,6 +336,13 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <div class="subline">
         <p id="streak" class="streak" hidden></p>
         <p id="quote" class="quote"></p>
+      </div>
+      <div class="rate-row">
+        <div id="rate" class="rate" role="slider" tabindex="0" aria-label="오늘 별점" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0" aria-valuetext="별점 없음">
+          <div class="rate-base"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+          <div class="rate-fill" id="rateFill"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45 6.2 20.5l1.1-6.45-4.7-4.6 6.5-.95z"/></svg></div>
+        </div>
+        <span id="rateVal" class="rate-val"></span>
       </div>
       <p id="sampleNote" class="note" hidden>예시 일기예요. 고쳐 쓰면 내 일기가 돼요.</p>
     </header>
@@ -815,17 +832,17 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   var draft = blank();
   var timer = null;
 
-  function blank() { return { title: '', body: '', photos: [], tags: [] }; }
+  function blank() { return { title: '', body: '', photos: [], tags: [], rating: 0 }; }
   function loadDraft() {
     var e = entries[editKey];
-    draft = e ? { title: e.title || '', body: e.body || '', photos: (e.photos || []).slice(), tags: (e.tags || []).slice() } : blank();
+    draft = e ? { title: e.title || '', body: e.body || '', photos: (e.photos || []).slice(), tags: (e.tags || []).slice(), rating: +e.rating || 0 } : blank();
   }
   function setState(s) { $('#saveState').textContent = s; }
   function clock(ts) { var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
 
   function commit() {
     timer = null;
-    var empty = !draft.title.trim() && !draft.body.trim() && !draft.photos.length && !draft.tags.length;
+    var empty = !draft.title.trim() && !draft.body.trim() && !draft.photos.length && !draft.tags.length && !draft.rating;
     if (empty) {
       if (entries[editKey]) { delete entries[editKey]; persist(); }
       setState('');
@@ -836,7 +853,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     var prev = entries[editKey];
     var now = Date.now();
     entries[editKey] = {
-      date: editKey, title: draft.title, body: draft.body,
+      date: editKey, title: draft.title, body: draft.body, rating: draft.rating || 0,
       photos: draft.photos.slice(), tags: draft.tags.slice(),
       updatedAt: now, synced: false, notionId: prev && prev.notionId
     };
@@ -887,6 +904,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     renderPhotos();
     renderTags();
     renderStreak();
+    renderRate();
     var e = entries[editKey];
     $('#sampleNote').hidden = !(e && e.sample);
     $('#delZone').hidden = !e;
@@ -899,6 +917,54 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       setState(storageOk ? '' : '이 화면에서는 저장이 막혀 있어요. 새로고침하면 사라질 수 있어요.');
     }
   }
+
+  function renderRate() {
+    var v = +draft.rating || 0;
+    $('#rateFill').style.width = (v / 5 * 100) + '%';
+    $('#rateVal').textContent = v ? v.toFixed(1) : '';
+    var r = $('#rate');
+    r.setAttribute('aria-valuenow', String(v));
+    r.setAttribute('aria-valuetext', v ? '별 ' + v + '개' : '별점 없음');
+  }
+  function setRate(v) {
+    v = Math.max(0, Math.min(5, Math.round(v * 2) / 2));
+    if (v === (+draft.rating || 0)) return;
+    draft.rating = v; renderRate(); schedule();
+  }
+  (function () {
+    var r = $('#rate'), down = false, moved = false, startV = 0;
+    function valueAt(x) {
+      var b = r.getBoundingClientRect();
+      var f = (x - b.left) / b.width;
+      return Math.max(0.5, Math.min(5, Math.ceil(f * 10) / 2));
+    }
+    r.addEventListener('pointerdown', function (e) {
+      down = true; moved = false; startV = +draft.rating || 0;
+      try { r.setPointerCapture(e.pointerId); } catch (x) {}
+      var v = valueAt(e.clientX);
+      if (v !== startV) { moved = true; setRate(v); }
+      e.preventDefault();
+    });
+    r.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var v = valueAt(e.clientX);
+      if (v !== +draft.rating) { moved = true; setRate(v); }
+    });
+    function end() {
+      if (!down) return;
+      down = false;
+      /* a tap on the value that is already set clears it */
+      if (!moved && startV) setRate(0);
+    }
+    r.addEventListener('pointerup', end);
+    r.addEventListener('pointercancel', function () { down = false; });
+    r.addEventListener('keydown', function (e) {
+      var v = +draft.rating || 0;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') { setRate(v + 0.5); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') { setRate(v - 0.5); e.preventDefault(); }
+      else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') { setRate(0); e.preventDefault(); }
+    });
+  })();
 
   function renderPhotos() {
     var h = '';
@@ -1066,10 +1132,10 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       var snip = (e.title ? body : body.split('\n').slice(1).join(' ')).replace(/\s+/g, ' ').trim();
       var tags = (e.tags || []).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('');
       return '<button type="button" class="row" data-key="' + k + '">' +
-        '<div><div class="row-d">' + d.getDate() + '</div><div class="row-w">' + (d.getMonth() + 1) + '월 · ' + WD[d.getDay()] + '</div></div>' +
-        '<div class="row-c"><div class="row-t' + (head ? '' : ' soft') + '">' + esc(head || '사진만 있는 날') + (e.sample ? '<span class="sample">예시</span>' : '') + '</div>' +
+        '<div><div class="row-d">' + d.getDate() + '</div><div class="row-w">' + (d.getMonth() + 1) + '월</div></div>' +
+        '<div class="row-c"><div class="row-t' + (head ? '' : ' soft') + '">' + esc(head || (e.photos && e.photos.length ? '사진만 있는 날' : '별점만 남긴 날')) + (e.sample ? '<span class="sample">예시</span>' : '') + '</div>' +
         (snip ? '<div class="row-s">' + esc(snip) + '</div>' : '') +
-        (tags ? '<div class="row-g">' + tags + '</div>' : '') + '</div>' +
+        (tags || e.rating ? '<div class="row-g">' + (e.rating ? '<span class="row-r">★ ' + (+e.rating).toFixed(1) + '</span>' : '') + tags + '</div>' : '') + '</div>' +
         (e.photos && e.photos[0] ? '<img class="row-img" src="' + esc(e.photos[0]) + '" alt="">' : '<span class="row-go" aria-hidden="true"><svg viewBox="0 0 24 24" width="16" height="16"><path class="ti" d="M8 16 16 8M9.5 8H16v6.5"/></svg></span>') +
         '</button>';
     }).join('');
@@ -1334,7 +1400,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     var sx = 0, sy = 0, st = 0, on = false;
     var view = $('#v-write');
     view.addEventListener('touchstart', function (e) {
-      if (e.touches.length !== 1 || e.target.closest('.ph, .lb, .tagrow, #tagSuggestWrap')) { on = false; return; }
+      if (e.touches.length !== 1 || e.target.closest('.ph, .lb, .tagrow, #tagSuggestWrap, .rate')) { on = false; return; }
       on = true; sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now();
     }, { passive: true });
     view.addEventListener('touchend', function (e) {
@@ -1635,6 +1701,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       body: e.title ? e.title + '\n\n' + (e.body || '') : (e.body || ''),
       summary: (e.title || lines[0] || '').slice(0, 100),
       tags: (e.tags || []).join(', '),
+      rating: e.rating ? +e.rating : 0,
       owned: !!e.notionId
     };
     return fetch(nCfg.url.replace(/\/+$/, '') + '/sync', {
@@ -1771,7 +1838,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   load();
   loadPrefs();
   loadLock();
-  seed();
+  Object.keys(entries).forEach(function (k) { if (entries[k] && entries[k].sample) delete entries[k]; });
+  persist();
   buildPad();
   applyPrefs();
   renderQuote();
