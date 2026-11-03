@@ -1,6 +1,6 @@
 /* Keeps the app usable offline. The page itself is fetched fresh when online (so updates show up),
    everything else from this site is served from the cache first. */
-const CACHE = 'haru-v5';
+const CACHE = 'haru-v6';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
