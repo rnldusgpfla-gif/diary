@@ -134,6 +134,26 @@ body.typing .done{display:inline-flex;align-items:center}
 .rate-fill svg{fill:#F5C542}
 .rate-val{font-size:13px;color:var(--ink-soft);font-variant-numeric:tabular-nums;min-width:3ch}
 .row-r{color:var(--on-a);font-weight:600}
+.note-new{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:14px;padding:16px}
+.note-in{width:100%;min-height:52px;-webkit-appearance:none;appearance:none;border:0;background:transparent;color:var(--ink);font-family:var(--w-font);font-size:var(--w-size);letter-spacing:var(--w-track);line-height:1.6;resize:none;padding:0;overflow:hidden}
+.note-in::placeholder{color:var(--ink-soft);opacity:1}
+.note-bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.note-save{min-height:36px;padding:0 18px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600}
+.note-save:disabled{opacity:.3}
+.note-feed{display:flex;flex-direction:column;gap:10px}
+.note{border-radius:14px;padding:16px;background:var(--surface);color:var(--on-a);display:flex;flex-direction:column;gap:12px;cursor:pointer}
+.note-feed .note:nth-child(4n+1){background:var(--a-blue)}
+.note-feed .note:nth-child(4n+2){background:var(--a-green)}
+.note-feed .note:nth-child(4n+3){background:var(--a-yellow)}
+.note-t{font-family:var(--w-font);font-size:var(--w-size);letter-spacing:var(--w-track);line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.note-f{font-size:12px;color:color-mix(in srgb,var(--on-a) 62%,transparent);font-variant-numeric:tabular-nums}
+.note .note-in{color:var(--on-a)}
+.note-acts{display:flex;gap:8px;align-items:center}
+.note-acts .sp{flex:1}
+.note-acts button{min-height:34px;padding:0 14px;border-radius:999px;font-size:13px;font-weight:600;background:color-mix(in srgb,var(--surface) 72%,transparent);color:var(--on-a)}
+.note-acts .ok{background:var(--ink);color:var(--paper)}
+.note-acts .del{color:var(--danger)}
+.note-empty{text-align:center;padding:24px 0}
 .sheet{display:flex;flex-direction:column;gap:14px}
 .sheet.swipe-l{animation:swl .22s ease-out}
 .sheet.swipe-r{animation:swr .22s ease-out}
@@ -286,7 +306,7 @@ input[type="range"]:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 3px var
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;justify-content:center;pointer-events:none;padding-top:8px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 .tabs{pointer-events:auto;display:flex;gap:2px;padding:4px;background:var(--ink);border-radius:999px;box-shadow:0 10px 30px rgba(0,0,0,.16),0 2px 6px rgba(0,0,0,.08)}
-.tab{height:40px;padding:0 20px;border-radius:999px;color:var(--paper);opacity:.6;font-size:14px;font-weight:600}
+.tab{height:40px;padding:0 16px;border-radius:999px;color:var(--paper);opacity:.6;font-size:14px;font-weight:600}
 .tab[aria-current="page"]{background:var(--a-yellow);color:#212121;opacity:1}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:30;max-width:calc(100% - 32px);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:500;text-align:center}
 .lb{position:fixed;inset:0;z-index:40;background:#141418;display:grid;place-items:center;padding:max(56px,calc(env(safe-area-inset-top,0px) + 48px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -382,6 +402,21 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <button type="button" id="delNo" class="btn">취소</button>
       </div>
     </div>
+  </section>
+
+  <!-- 끄적: 떠오른 생각을 시각과 함께 쌓아 두는 곳 -->
+  <section id="v-notes" class="view" aria-labelledby="notesH" hidden>
+    <h1 id="notesH" class="page-t">끄적</h1>
+    <form id="noteForm" class="note-new" autocomplete="off">
+      <label class="vh" for="noteInput">새로 끄적이기</label>
+      <textarea id="noteInput" class="note-in" rows="2" spellcheck="false" placeholder="떠오른 생각을 그냥 적어 두세요"></textarea>
+      <div class="note-bar">
+        <span class="cap">남기면 지금 시각이 같이 적혀요</span>
+        <button type="submit" class="note-save" id="noteSave" disabled>남기기</button>
+      </div>
+    </form>
+    <div id="noteFeed" class="note-feed"></div>
+    <p id="noteEmpty" class="cap note-empty" hidden>아직 끄적인 게 없어요.</p>
   </section>
 
   <!-- 모아보기 -->
@@ -518,7 +553,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
       <p class="cap">가져오면 같은 날짜는 더 최근에 고친 쪽이 남아요.</p>
     </div>
-    <p class="about">하루 한 장 · 시안 v1.0</p>
+    <p class="about">하루 한 장 · v1.1</p>
     <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
   </section>
 </main>
@@ -526,6 +561,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 <nav class="tabbar" id="tabbar" aria-label="메뉴">
   <div class="tabs">
     <button type="button" class="tab" data-tab="write" aria-current="page">쓰기</button>
+    <button type="button" class="tab" data-tab="notes">끄적</button>
     <button type="button" class="tab" data-tab="archive">모아보기</button>
     <button type="button" class="tab" data-tab="more">설정</button>
   </div>
@@ -1172,17 +1208,91 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   /* ---------- tabs ---------- */
   function setTab(name) {
     flush();
-    ['write', 'archive', 'more'].forEach(function (x) { $('#v-' + x).hidden = x !== name; });
+    ['write', 'notes', 'archive', 'more'].forEach(function (x) { $('#v-' + x).hidden = x !== name; });
     $$('.tab').forEach(function (b) {
       if (b.getAttribute('data-tab') === name) b.setAttribute('aria-current', 'page');
       else b.removeAttribute('aria-current');
     });
     if (name === 'write') { loadDraft(); renderWrite(); }
+    if (name === 'notes') renderNotes();
     if (name === 'archive') renderArchive();
     if (name === 'more') renderMore();
     window.scrollTo(0, 0);
   }
   function openWrite(key) { flush(); editKey = key; setTab('write'); }
+
+  /* ---------- 끄적 (quick notes) ---------- */
+  var NOTES_KEY = 'hharu.notes.v1';
+  var notes = [];
+  try { var _nn = JSON.parse(localStorage.getItem(NOTES_KEY) || '[]'); if (Array.isArray(_nn)) notes = _nn.filter(function (n) { return n && n.id && typeof n.text === 'string'; }); } catch (e) {}
+  var noteEdit = null, noteDel = null;
+  function saveNotes() {
+    try { localStorage.setItem(NOTES_KEY, JSON.stringify(notes)); return true; } catch (e) { toast('저장 공간이 부족해서 끄적을 저장하지 못했어요'); return false; }
+  }
+  function noteStamp(ms) {
+    var d = new Date(ms), now = new Date();
+    return (d.getFullYear() !== now.getFullYear() ? d.getFullYear() + '년 ' : '') + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + WD[d.getDay()] + '요일 · ' + clock(ms);
+  }
+  function autoNote(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+  function renderNotes() {
+    var list = notes.filter(function (n) { return !n.deleted; }).sort(function (a, b) { return b.createdAt - a.createdAt; });
+    $('#noteEmpty').hidden = list.length > 0;
+    $('#noteFeed').innerHTML = list.map(function (n) {
+      if (noteEdit === n.id) {
+        return '<article class="note" data-id="' + n.id + '"><label class="vh" for="noteEditIn">끄적 고치기</label>' +
+          '<textarea id="noteEditIn" class="note-in" spellcheck="false">' + esc(n.text) + '</textarea>' +
+          '<div class="note-acts"><button type="button" class="del" data-act="del">' + (noteDel === n.id ? '정말 지울까요?' : '지우기') + '</button><span class="sp"></span>' +
+          '<button type="button" data-act="cancel">취소</button><button type="button" class="ok" data-act="save">저장</button></div>' +
+          '<div class="note-f">' + noteStamp(n.createdAt) + '</div></article>';
+      }
+      return '<article class="note" data-id="' + n.id + '" tabindex="0" aria-label="눌러서 고치기"><div class="note-t">' + esc(n.text) + '</div>' +
+        '<div class="note-f">' + noteStamp(n.createdAt) + (n.updatedAt - n.createdAt > 60000 ? ' · 고침' : '') + '</div></article>';
+    }).join('');
+    var ed = $('#noteEditIn');
+    if (ed) { autoNote(ed); ed.focus(); ed.setSelectionRange(ed.value.length, ed.value.length); }
+  }
+  function noteChanged() { saveNotes(); if (typeof scheduleNotion === 'function') scheduleNotion(); }
+  $('#noteInput').addEventListener('input', function (e) { autoNote(e.target); $('#noteSave').disabled = !e.target.value.trim(); });
+  $('#noteInput').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) { e.preventDefault(); $('#noteForm').requestSubmit ? $('#noteForm').requestSubmit() : $('#noteSave').click(); }
+  });
+  $('#noteForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var input = $('#noteInput'), t = input.value.replace(/\s+$/, '');
+    if (!t.trim()) return;
+    var now = Date.now();
+    notes.push({ id: 'n' + now.toString(36) + Math.random().toString(36).slice(2, 7), text: t, createdAt: now, updatedAt: now, synced: false });
+    noteChanged();
+    input.value = ''; autoNote(input); $('#noteSave').disabled = true;
+    input.blur();
+    renderNotes();
+  });
+  $('#noteFeed').addEventListener('click', function (e) {
+    var card = e.target.closest('.note');
+    if (!card) return;
+    var id = card.getAttribute('data-id');
+    var n = notes.filter(function (x) { return x.id === id; })[0];
+    if (!n) return;
+    var act = e.target.closest('[data-act]');
+    if (noteEdit !== id) { noteEdit = id; noteDel = null; renderNotes(); return; }
+    if (!act) return;
+    var a = act.getAttribute('data-act');
+    if (a === 'cancel') { noteEdit = null; noteDel = null; renderNotes(); }
+    else if (a === 'save') {
+      var t = $('#noteEditIn').value.replace(/\s+$/, '');
+      if (!t.trim()) { noteDel = id; renderNotes(); return; }
+      if (t !== n.text) { n.text = t; n.updatedAt = Date.now(); n.synced = false; noteChanged(); }
+      noteEdit = null; renderNotes();
+    } else if (a === 'del') {
+      if (noteDel !== id) { noteDel = id; act.textContent = '정말 지울까요?'; return; }
+      n.deleted = true; n.updatedAt = Date.now(); n.synced = false;
+      noteEdit = null; noteDel = null; noteChanged(); renderNotes(); toast('지웠어요');
+    }
+  });
+  $('#noteFeed').addEventListener('input', function (e) { if (e.target.id === 'noteEditIn') autoNote(e.target); });
+  $('#noteFeed').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.classList.contains('note') && !e.target.querySelector('textarea')) { e.target.click(); }
+  });
 
   /* ---------- lock ---------- */
   var lock = { enabled: false, hash: '', salt: '', away: 60 };
@@ -1718,24 +1828,56 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       });
     });
   }
+  function isoLocal(ms) {
+    var d = new Date(ms), off = -d.getTimezoneOffset(), sg = off >= 0 ? '+' : '-';
+    off = Math.abs(off);
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()) + ':' + pad(d.getSeconds()) + sg + pad(Math.floor(off / 60)) + ':' + pad(off % 60);
+  }
+  function syncNote(n) {
+    var stamp = n.updatedAt;
+    if (n.deleted && !n.inNotion) { var k = notes.indexOf(n); if (k >= 0) notes.splice(k, 1); saveNotes(); return Promise.resolve(); }
+    return fetch(nCfg.url.replace(/\/+$/, '') + '/note', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Diary-Key': nCfg.key },
+      body: JSON.stringify(n.deleted ? { id: n.id, deleted: true } : { id: n.id, text: n.text, createdAt: isoLocal(n.createdAt) })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (r.status === 404) throw { code: 'old_server' };
+        if (!r.ok || !j.ok) throw { code: 'http_' + r.status, message: j.error || '' };
+        if (n.deleted) { var i = notes.indexOf(n); if (i >= 0) notes.splice(i, 1); }
+        else { n.inNotion = true; if (n.updatedAt === stamp) n.synced = true; }
+        saveNotes();
+      });
+    });
+  }
   function notionSync(manual) {
     if (!nReady() || nBusy) return;
     if (navigator.onLine === false) { if (manual) setNotionMsg('인터넷이 연결되면 보낼게요.'); return; }
     var keys = pendingKeys();
-    if (!keys.length) { if (manual) setNotionMsg('보낼 일기가 없어요. 모두 노션에 있어요.'); return; }
+    var pendNotes = notes.filter(function (n) { return !n.synced; });
+    if (!keys.length && !pendNotes.length) { if (manual) setNotionMsg('보낼 게 없어요. 모두 노션에 있어요.'); return; }
     nBusy = true;
-    setNotionMsg('노션에 보내는 중… (' + keys.length + '편)');
-    var sent = 0, skipped = 0;
-    keys.reduce(function (p, k) {
+    setNotionMsg('노션에 보내는 중…');
+    var sent = 0, skipped = 0, nSent = 0;
+    var chain = keys.reduce(function (p, k) {
       return p.then(function () { return syncOne(k).then(function () { sent++; }, function (e) {
         if (e && e.code === 'skip') { skipped++; return; }
         throw e;
       }); });
-    }, Promise.resolve()).then(function () {
-      setNotionMsg((sent ? sent + '편 보냈어요 · ' + clock(Date.now()) : '') + (skipped ? (sent ? ' · ' : '') + skipped + '편은 노션에 이미 글이 있어 건너뛰었어요' : ''));
+    }, Promise.resolve());
+    chain = pendNotes.reduce(function (p, n) {
+      return p.then(function () { return syncNote(n).then(function () { nSent++; }); });
+    }, chain);
+    chain.then(function () {
+      var parts = [];
+      if (sent) parts.push('일기 ' + sent + '편');
+      if (nSent) parts.push('끄적 ' + nSent + '개');
+      setNotionMsg((parts.length ? parts.join(', ') + ' 보냈어요 · ' + clock(Date.now()) : '') + (skipped ? (parts.length ? ' · ' : '') + skipped + '편은 노션에 이미 글이 있어 건너뛰었어요' : ''));
     }, function (e) {
       var c = e && e.code;
-      setNotionMsg(c === 'http_401' ? '연결 키가 맞지 않아요. 연결 설정을 확인해 주세요.' : '보내지 못했어요 (' + (c || '') + (e && e.message ? ' ' + e.message : '') + '). 다음에 다시 시도해요.');
+      setNotionMsg(c === 'http_401' ? '연결 키가 맞지 않아요. 연결 설정을 확인해 주세요.'
+        : c === 'old_server' ? '끄적을 보내려면 중계 서버 코드를 새로 붙여넣어야 해요.'
+        : '보내지 못했어요 (' + (c || '') + (e && e.message ? ' ' + e.message : '') + '). 다음에 다시 시도해요.');
     }).then(function () { nBusy = false; renderMore(); renderNotionCard(); });
   }
   function scheduleNotion() { clearTimeout(nTimer); nTimer = setTimeout(function () { notionSync(false); }, 4000); }
@@ -1765,7 +1907,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   function backupText() {
     var own = {};
     Object.keys(entries).forEach(function (k) { if (!entries[k].sample) own[k] = entries[k]; });
-    return JSON.stringify({ app: 'haru-han-jang', v: 1, at: new Date().toISOString(), entries: own, prefs: prefs });
+    return JSON.stringify({ app: 'haru-han-jang', v: 1, at: new Date().toISOString(), entries: own, prefs: prefs, notes: notes.filter(function (n) { return !n.deleted; }) });
   }
   function importBackup(text) {
     var o;
@@ -1780,10 +1922,20 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       else if ((e.updatedAt || 0) > (cur.updatedAt || 0)) { entries[k] = e; updated++; }
     });
     if (o.prefs && Array.isArray(o.prefs.favTags) && !(prefs.favTags && prefs.favTags.length)) { prefs.favTags = o.prefs.favTags.slice(0, 20); savePrefs(); }
+    var nAdded = 0;
+    if (Array.isArray(o.notes)) {
+      o.notes.forEach(function (n) {
+        if (!n || !n.id || typeof n.text !== 'string') return;
+        var cur = notes.filter(function (x) { return x.id === n.id; })[0];
+        if (!cur) { notes.push(n); nAdded++; }
+        else if ((n.updatedAt || 0) > (cur.updatedAt || 0)) { notes[notes.indexOf(cur)] = n; }
+      });
+      saveNotes();
+    }
     if (persist() === 'full') { toast('저장 공간이 부족해요'); return; }
     $('#bkText').value = '';
     renderMore();
-    toast('새 일기 ' + added + '편' + (updated ? ', 바뀐 일기 ' + updated + '편' : '') + '을 가져왔어요');
+    toast('새 일기 ' + added + '편' + (updated ? ', 바뀐 일기 ' + updated + '편' : '') + (nAdded ? ', 끄적 ' + nAdded + '개' : '') + '을 가져왔어요');
   }
   $('#bkCopy').addEventListener('click', function () {
     var t = backupText();
