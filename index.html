@@ -283,6 +283,11 @@ body.typing .done{display:inline-flex;align-items:center}
 .pv-b{font-family:var(--w-font);font-weight:400;font-size:var(--w-size);letter-spacing:var(--w-track);line-height:var(--w-lh);color:var(--ink)}
 .chip.wait{opacity:.5}
 .lab-row{align-self:stretch;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.sw-row{margin-top:4px}
+.toggle{flex:none;position:relative;width:50px;height:30px;border-radius:999px;background:var(--paper-2);transition:background .15s}
+.toggle span{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .15s}
+.toggle[aria-checked="true"]{background:var(--ink)}
+.toggle[aria-checked="true"] span{transform:translateX(20px);background:var(--paper)}
 .mini{font-size:12px;color:var(--ink-soft);text-decoration:underline;text-underline-offset:3px;padding:10px 0 10px 12px;margin:-10px 0 -10px 0}
 .card .credit{font-size:11px;line-height:1.55;color:var(--ink-soft)}
 .slide{align-self:stretch;display:flex;flex-direction:column}
@@ -488,6 +493,13 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <div class="slide">
         <div class="slide-h"><label for="lhR">줄 간격</label><output id="lhO" for="lhR"></output></div>
         <input id="lhR" type="range" min="14" max="26" step="1">
+      </div>
+      <div class="lab-row sw-row">
+        <div>
+          <p class="label" style="margin:0">타자기 소리</p>
+          <p class="cap">쓸 때마다 옛날 타자기처럼 탁탁 소리가 나요. 아이폰 무음 모드에서는 안 들려요.</p>
+        </div>
+        <button type="button" class="toggle" id="sndT" role="switch" aria-checked="false" aria-label="타자기 소리"><span></span></button>
       </div>
     </div>
 
@@ -772,6 +784,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       if (PAPERS[o.paper]) prefs.paper = o.paper;
       if (PATTERNS.some(function (p) { return p[0] === o.pattern; })) prefs.pattern = o.pattern;
       if (typeof o.sx === 'string' && SXMAP[o.sx]) prefs.sx = o.sx;
+      if (o.typeSound === true) prefs.typeSound = true;
       if (Array.isArray(o.favTags)) prefs.favTags = o.favTags.filter(function (t) { return typeof t === 'string' && t; }).slice(0, 20);
     } catch (e) {}
   }
@@ -1294,6 +1307,81 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (e.key === 'Enter' && e.target.classList.contains('note') && !e.target.querySelector('textarea')) { e.target.click(); }
   });
 
+  /* ---------- typewriter sound: made on the fly with Web Audio, no sound files ---------- */
+  var tw = { ctx: null, noise: null, last: 0 };
+  function twCtx() {
+    if (!tw.ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try { tw.ctx = new AC(); } catch (e) { return null; }
+      var n = tw.ctx.sampleRate * 0.25, b = tw.ctx.createBuffer(1, n, tw.ctx.sampleRate), ch = b.getChannelData(0);
+      for (var i = 0; i < n; i++) ch[i] = Math.random() * 2 - 1;
+      tw.noise = b;
+    }
+    if (tw.ctx.state === 'suspended') tw.ctx.resume();
+    return tw.ctx;
+  }
+  function twHit(c, t, freq, q, dur, vol) {
+    var s = c.createBufferSource(); s.buffer = tw.noise;
+    var f = c.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = freq; f.Q.value = q;
+    var g = c.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    s.connect(f); f.connect(g); g.connect(c.destination);
+    s.start(t, Math.random() * 0.2); s.stop(t + dur + 0.02);
+  }
+  function twThunk(c, t, freq, dur, vol) {
+    var o = c.createOscillator(); o.type = 'triangle';
+    o.frequency.setValueAtTime(freq, t); o.frequency.exponentialRampToValueAtTime(freq * 0.55, t + dur);
+    var g = c.createGain(); g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function twBell(c, t) {
+    [2093, 3140].forEach(function (fr, i) {
+      var o = c.createOscillator(); o.type = 'sine'; o.frequency.value = fr;
+      var g = c.createGain(); g.gain.setValueAtTime(i ? 0.05 : 0.11, t); g.gain.exponentialRampToValueAtTime(0.0008, t + 0.9);
+      o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.95);
+    });
+  }
+  function typeSound(kind) {
+    if (!prefs.typeSound) return;
+    var now = Date.now();
+    if (kind === 'key' && now - tw.last < 28) return;
+    tw.last = now;
+    var c = twCtx();
+    if (!c) return;
+    var t = c.currentTime + 0.005, r = Math.random();
+    if (kind === 'enter') {
+      twBell(c, t);
+      twHit(c, t + 0.05, 900, 0.7, 0.22, 0.18);          /* carriage sliding back */
+      twThunk(c, t + 0.26, 140, 0.09, 0.32);
+    } else if (kind === 'space') {
+      twHit(c, t, 1400, 1.2, 0.05, 0.42);
+      twThunk(c, t, 110, 0.07, 0.38);
+    } else if (kind === 'back') {
+      twHit(c, t, 2600, 2, 0.03, 0.22);
+    } else {
+      twHit(c, t, 2600 + r * 1600, 1.6, 0.032, 0.5);       /* the key strike */
+      twThunk(c, t + 0.004, 150 + r * 50, 0.05, 0.3);      /* the type bar landing */
+    }
+  }
+  document.addEventListener('input', function (e) {
+    if (!prefs.typeSound) return;
+    var el = e.target;
+    if (!el || !el.matches || !el.matches('#body, #noteInput, #noteEditIn')) return;
+    var it = e.inputType || '';
+    if (it === 'insertLineBreak' || it === 'insertParagraph' || (it === 'insertText' && e.data === '\n')) typeSound('enter');
+    else if (it.indexOf('delete') === 0) typeSound('back');
+    else if (it === 'insertText' && e.data === ' ') typeSound('space');
+    else if (it.indexOf('insert') === 0) typeSound('key');
+  });
+  document.addEventListener('touchstart', function () { if (prefs.typeSound) twCtx(); }, { passive: true, once: false });
+  function renderSnd() { $('#sndT').setAttribute('aria-checked', String(!!prefs.typeSound)); }
+  $('#sndT').addEventListener('click', function () {
+    prefs.typeSound = !prefs.typeSound;
+    savePrefs(); renderSnd();
+    if (prefs.typeSound) { twCtx(); setTimeout(function () { typeSound('key'); }, 30); setTimeout(function () { typeSound('key'); }, 150); setTimeout(function () { typeSound('enter'); }, 300); }
+  });
+  renderSnd();
+
   /* ---------- lock ---------- */
   var lock = { enabled: false, hash: '', salt: '', away: 60 };
   var locked = false;
@@ -1737,7 +1825,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     savePrefs(); applyPrefs(); renderLook();
   });
   $('#resetLook').addEventListener('click', function () {
-    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none', favTags: prefs.favTags };
+    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound };
     savePrefs(); applyPrefs(); renderLook();
     toast('기본값으로 되돌렸어요');
   });
