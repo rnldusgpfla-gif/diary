@@ -471,6 +471,20 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       </details>
     </div>
 
+    <div class="card" id="pushCard">
+      <div class="card-h"><h2>밤 알림</h2><button type="button" class="toggle" id="pushT" role="switch" aria-checked="false" aria-label="밤 알림"><span></span></button></div>
+      <p>정한 시간에 일기 쓸 시간이라고 알려 드려요. 아이폰은 홈 화면에 추가한 앱에서만 받을 수 있어요.</p>
+      <div class="n-body" id="pushSet" hidden>
+        <label class="label" for="pushTime">시간</label>
+        <input id="pushTime" class="input" type="time" value="22:00">
+        <label class="label" for="pushBody">알림 문구</label>
+        <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" value="오늘 하루, 어땠어요?">
+        <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
+        <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
+      </div>
+      <p class="cap" id="pushMsg"></p>
+    </div>
+
     <div class="card">
       <h2>글씨</h2>
       <div class="pv" id="pv">
@@ -563,7 +577,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
       <p class="cap">가져오면 같은 날짜는 더 최근에 고친 쪽이 남아요.</p>
     </div>
-    <p class="about">하루 한 장 · v1.5</p>
+    <p class="about">하루 한 장 · v2.0</p>
     <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
   </section>
 </main>
@@ -893,7 +907,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     timer = null;
     var empty = !draft.title.trim() && !draft.body.trim() && !draft.photos.length && !draft.tags.length && !draft.rating;
     if (empty) {
-      if (entries[editKey]) { delete entries[editKey]; persist(); }
+      if (entries[editKey]) { delete entries[editKey]; persist(); if (typeof markGone === 'function') markGone('e:' + editKey); }
       setState('');
       $('#delZone').hidden = true;
       renderStreak();
@@ -941,7 +955,10 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   }
   function resetDelete() { $('#delAsk').hidden = false; $('#delConfirm').hidden = true; }
 
+  var QUESTIONS = ['오늘 가장 오래 생각한 건 뭐였나요?', '오늘 나를 웃게 한 순간은?', '오늘 먹은 것 중 제일 맛있었던 건?', '오늘 누구와 가장 많이 이야기했나요?', '오늘 하루를 한 단어로 고른다면?', '오늘 나에게 고마웠던 점 하나', '오늘 아쉬웠던 일, 내일은 어떻게 할까요?', '오늘 새로 알게 된 것은?', '오늘 들은 말 중에 기억에 남는 한마디는?', '오늘 내 기분은 몇 점이었나요? 왜요?', '오늘 가장 집중했던 시간은 언제였나요?', '오늘 본 풍경 중 하나를 적어 볼까요?', '오늘 미뤄 둔 일이 있다면, 왜 미뤘을까요?', '요즘 자꾸 떠오르는 사람은 누구인가요?', '오늘 몸은 어땠나요?', '오늘 산 것, 혹은 사고 싶었던 것은?', '오늘 들은 노래 중 하나를 남겨 볼까요?', '지금 이 순간 가장 원하는 건 뭐예요?', '오늘 잘 해낸 작은 일 하나', '오늘 화가 나거나 답답했던 순간이 있었나요?', '내일의 나에게 한마디 해 준다면?', '오늘 가장 오래 머문 장소는 어디였나요?', '오늘 나를 피곤하게 한 건 뭐였을까요?', '오늘 누군가에게 해 준 친절이 있었나요?', '오늘 하루 중 다시 돌아가고 싶은 시간은?', '요즘 빠져 있는 것은?', '오늘 걱정했던 일은 실제로 어떻게 됐나요?', '오늘 가장 많이 한 생각을 세 줄로', '1년 뒤의 내가 오늘을 보면 뭐라고 할까요?', '오늘 잠들기 전에 꼭 남기고 싶은 한 문장'];
+  function questionFor(key) { var h = 0; for (var i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0; return QUESTIONS[h % QUESTIONS.length]; }
   function renderWrite() {
+    $('#body').placeholder = questionFor(editKey);
     var d = parseKey(editKey);
     var st = $('#dateStamp');
     st.textContent = (d.getFullYear() !== new Date().getFullYear() ? d.getFullYear() + '년 ' : '') + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + WD[d.getDay()] + '요일';
@@ -1795,6 +1812,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     clearTimeout(timer); timer = null;
     delete entries[editKey];
     persist();
+    if (typeof markGone === 'function') markGone('e:' + editKey);
     loadDraft(); renderWrite();
     toast('지웠어요');
   });
@@ -1934,7 +1952,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
      The worker keeps the Notion key. The app sends each saved entry to POST <worker>/sync;
      the worker writes it into the 💻 다이어리 row with the same date. */
   var NKEY = 'hharu.notion.v1';
-  var nCfg = { url: '', key: '' };
+  var nCfg = { url: '', key: '', sync: false, push: false };
   try { var _n = JSON.parse(localStorage.getItem(NKEY) || '{}'); if (_n && typeof _n === 'object') { nCfg.url = _n.url || ''; nCfg.key = _n.key || ''; } } catch (e) {}
   var nBusy = false, nTimer = null;
   function nReady() { return /^https:\/\//.test(nCfg.url) && !!nCfg.key; }
@@ -2029,25 +2047,229 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         : '보내지 못했어요 (' + (c || '') + (e && e.message ? ' ' + e.message : '') + '). 다음에 다시 시도해요.');
     }).then(function () { nBusy = false; renderMore(); renderNotionCard(); });
   }
-  function scheduleNotion() { clearTimeout(nTimer); nTimer = setTimeout(function () { notionSync(false); }, 4000); }
-  $('#notionBtn').addEventListener('click', function () { notionSync(true); });
+
+  /* ---------- online sync: every device keeps a copy on the user's own server (Cloudflare KV);
+     the server also writes each item to Notion, so the app only talks to the server ---------- */
+  var TOMB_KEY = 'hharu.tomb.v1', tomb = {};
+  try { tomb = JSON.parse(localStorage.getItem(TOMB_KEY) || '{}') || {}; } catch (e) { tomb = {}; }
+  function saveTomb() { try { localStorage.setItem(TOMB_KEY, JSON.stringify(tomb)); } catch (e) {} }
+  function markGone(k) { tomb[k] = Date.now(); saveTomb(); scheduleNotion(); }
+  var TZ = (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Seoul'; } catch (e) { return 'Asia/Seoul'; } })();
+  var lastSync = 0;
+  function api(path, body, method) {
+    return fetch(nCfg.url.replace(/\/+$/, '') + path, {
+      method: method || 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Diary-Key': nCfg.key },
+      body: method === 'GET' ? undefined : JSON.stringify(body || {})
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) {
+        if (!r.ok || j.ok === false) throw { code: 'http_' + r.status, message: j.error || '' };
+        return j;
+      });
+    });
+  }
+  function checkServer() {
+    if (!nReady()) return Promise.resolve(false);
+    return fetch(nCfg.url.replace(/\/+$/, '') + '/').then(function (r) { return r.json(); }).then(function (j) {
+      nCfg.sync = !!j.sync; nCfg.push = !!j.push; renderNotionCard(); renderPush(); return true;
+    }, function () { return false; });
+  }
+  function localItems() {
+    var m = {};
+    Object.keys(tomb).forEach(function (k) { m[k] = { u: tomb[k], gone: true }; });
+    Object.keys(entries).forEach(function (k) {
+      var e = entries[k];
+      if (e.sample) return;
+      var u = e.updatedAt || 0;
+      if (!m['e:' + k] || u >= m['e:' + k].u) m['e:' + k] = { u: u, e: e };
+    });
+    notes.forEach(function (n) { m['n:' + n.id] = { u: n.updatedAt || n.createdAt || 0, n: n }; });
+    return m;
+  }
+  function valueFor(it) {
+    if (it.gone) return { deleted: true, updatedAt: it.u };
+    if (it.e) {
+      var v = {};
+      Object.keys(it.e).forEach(function (f) { if (['synced', 'notionId', 'notionSkip', 'forceNotion', 'sample'].indexOf(f) < 0) v[f] = it.e[f]; });
+      return v;
+    }
+    var n = it.n;
+    return { id: n.id, text: n.text, createdAt: n.createdAt, updatedAt: n.updatedAt || n.createdAt, deleted: !!n.deleted, tz: TZ };
+  }
+  function applyRemote(k, v, u) {
+    var typingHere = document.body.classList.contains('typing') && k === 'e:' + editKey;
+    if (typingHere) return false;                              /* don't swap the page under the user's fingers */
+    if (k.indexOf('e:') === 0) {
+      var day = k.slice(2);
+      if (v.deleted) { delete entries[day]; tomb[k] = u; }
+      else { var keepSkip = entries[day] && entries[day].notionSkip; entries[day] = v; entries[day].synced = true; if (keepSkip) entries[day].notionSkip = true; delete tomb[k]; }
+    } else {
+      var id = k.slice(2), cur = notes.filter(function (x) { return x.id === id; })[0];
+      var n = { id: id, text: v.text || '', createdAt: v.createdAt || u, updatedAt: v.updatedAt || u, deleted: !!v.deleted, synced: true, inNotion: true };
+      if (cur) notes[notes.indexOf(cur)] = n; else notes.push(n);
+    }
+    return true;
+  }
+  var kvBusy = false;
+  function kvSync(manual) {
+    if (kvBusy) return Promise.resolve();
+    kvBusy = true;
+    if (manual) setNotionMsg('맞추는 중…');
+    var mine = localItems(), pulled = 0, pushed = 0, skipped = 0, touchedEdit = false;
+    return api('/kv/list').then(function (j) {
+      var remote = {};
+      (j.items || []).forEach(function (r) { remote[r.k] = r; });
+      var want = Object.keys(remote).filter(function (k) { return !mine[k] || remote[k].u > mine[k].u; });
+      var give = Object.keys(mine).filter(function (k) {
+        var it = mine[k];
+        return !remote[k] || it.u > remote[k].u || (it.e && it.e.forceNotion);
+      }).filter(function (k) { return !(mine[k].gone && !remote[k]); });   /* nothing to delete on the server */
+      var getChain = Promise.resolve();
+      for (var i = 0; i < want.length; i += 40) (function (batch) {
+        getChain = getChain.then(function () {
+          return api('/kv/get', { keys: batch }).then(function (g) {
+            batch.forEach(function (k) {
+              var v = g.items && g.items[k];
+              if (v && applyRemote(k, v, remote[k].u)) { pulled++; if (k === 'e:' + editKey) touchedEdit = true; }
+            });
+          });
+        });
+      })(want.slice(i, i + 40));
+      return getChain.then(function () {
+        if (pulled) { persist(); saveNotes(); saveTomb(); }
+        var putChain = Promise.resolve();
+        for (var i = 0; i < give.length; i += 4) (function (batch) {
+          putChain = putChain.then(function () {
+            var items = batch.map(function (k) {
+              var it = mine[k];
+              return { k: k, u: it.u, v: valueFor(it), owned: !!(it.e && it.e.notionId), force: !!(it.e && it.e.forceNotion) };
+            });
+            return api('/kv/put', { items: items }).then(function (res) {
+              var r = res.results || {};
+              batch.forEach(function (k) {
+                var it = mine[k], st = r[k];
+                if (st === 'stale' || st === 'bad' || !st) return;
+                pushed++;
+                if (it.e) {
+                  var cur = entries[k.slice(2)];
+                  if (cur) {
+                    delete cur.forceNotion;
+                    if (st === 'skipped') { cur.notionSkip = true; skipped++; }
+                    else { cur.notionSkip = false; cur.notionId = cur.notionId || 'server'; }
+                    if ((cur.updatedAt || 0) === it.u) cur.synced = true;
+                  }
+                } else if (it.n) { if ((it.n.updatedAt || it.n.createdAt) === it.u) it.n.synced = true; }
+              });
+            });
+          });
+        })(give.slice(i, i + 4));
+        return putChain;
+      });
+    }).then(function () {
+      persist(); saveNotes();
+      lastSync = Date.now();
+      setNotionMsg('동기화됨 · ' + clock(lastSync) + (pulled ? ' · 받아온 것 ' + pulled + '개' : '') + (skipped ? ' · ' + skipped + '일은 노션에 이미 글이 있어 건너뛰었어요' : ''));
+      if (pulled) {
+        if (touchedEdit) { loadDraft(); renderWrite(); }
+        if (!$('#v-notes').hidden) renderNotes();
+        if (!$('#v-archive').hidden) renderArchive();
+      }
+    }, function (e) {
+      var c = e && e.code;
+      setNotionMsg(c === 'http_401' ? '연결 키가 맞지 않아요. 연결 설정을 확인해 주세요.' : '동기화하지 못했어요 (' + (c || '') + (e && e.message ? ' ' + e.message : '') + '). 잠시 뒤 다시 시도해요.');
+    }).then(function () { kvBusy = false; renderMore(); renderNotionCard(); });
+  }
+  function syncNow(manual) {
+    if (!nReady()) return;
+    if (navigator.onLine === false) { if (manual) setNotionMsg('인터넷이 연결되면 맞출게요.'); return; }
+    if (nCfg.sync) kvSync(manual); else notionSync(manual);
+  }
+  function scheduleNotion() { clearTimeout(nTimer); nTimer = setTimeout(function () { syncNow(false); }, 4000); }
+
+  $('#notionBtn').addEventListener('click', function () { syncNow(true); });
   $('#nForce').addEventListener('click', function () {
     Object.keys(entries).forEach(function (k) {
       var e = entries[k];
-      if (e.notionSkip) { e.notionSkip = false; e.synced = false; e.notionId = e.notionId || 'overwrite'; }
+      if (e.notionSkip) { e.notionSkip = false; e.synced = false; e.notionId = e.notionId || 'overwrite'; e.forceNotion = true; }
     });
-    persist(); renderNotionCard(); notionSync(true);
+    persist(); renderNotionCard(); syncNow(true);
   });
   $('#nSave').addEventListener('click', function () {
     nCfg.url = $('#nUrl').value.trim(); nCfg.key = $('#nKey').value.trim();
-    try { localStorage.setItem(NKEY, JSON.stringify(nCfg)); } catch (e) {}
+    try { localStorage.setItem(NKEY, JSON.stringify({ url: nCfg.url, key: nCfg.key })); } catch (e) {}
     renderNotionCard();
-    if (nReady()) { setNotionMsg('저장했어요. 보내 볼게요…'); notionSync(true); } else setNotionMsg('주소는 https:// 로 시작해야 해요.');
+    if (nReady()) { setNotionMsg('저장했어요. 연결해 볼게요…'); checkServer().then(function () { syncNow(true); }); } else setNotionMsg('주소는 https:// 로 시작해야 해요.');
   });
-  renderNotionCard();
-  setTimeout(function () { notionSync(false); }, 2500);
-  window.addEventListener('online', function () { notionSync(false); });
-  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') notionSync(false); });
+
+  /* ---------- evening reminder (Web Push from the user's server) ---------- */
+  var PKEY = 'hharu.push.v1';
+  var pCfg = { on: false, time: '22:00', body: '오늘 하루, 어땠어요?', skip: true };
+  try { var _p = JSON.parse(localStorage.getItem(PKEY) || '{}'); if (_p && typeof _p === 'object') Object.keys(pCfg).forEach(function (f) { if (_p[f] !== undefined) pCfg[f] = _p[f]; }); } catch (e) {}
+  function savePush() { try { localStorage.setItem(PKEY, JSON.stringify(pCfg)); } catch (e) {} }
+  function setPushMsg(t) { $('#pushMsg').textContent = t; }
+  function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
+  function renderPush() {
+    var card = $('#pushCard');
+    if (!card) return;
+    $('#pushT').setAttribute('aria-checked', String(!!pCfg.on));
+    $('#pushSkip').setAttribute('aria-checked', String(!!pCfg.skip));
+    $('#pushTime').value = pCfg.time; $('#pushBody').value = pCfg.body;
+    $('#pushSet').hidden = !pCfg.on;
+  }
+  function b64ToU8(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
+  function pushSettings() { return { time: pCfg.time, tz: TZ, body: pCfg.body, title: '하루 한 장', skipIfWritten: !!pCfg.skip }; }
+  function turnPushOn() {
+    if (!nReady()) { setPushMsg('먼저 위 노션 칸의 연결 설정을 해 주세요.'); return; }
+    if (!nCfg.push) { setPushMsg('중계 서버 코드를 새로 붙여넣고 KV를 연결해야 쓸 수 있어요.'); return; }
+    if (!pushSupported()) { setPushMsg(/iPhone|iPad/.test(navigator.userAgent) && !navigator.standalone ? '홈 화면에 추가한 앱에서만 알림을 받을 수 있어요.' : '이 브라우저는 알림을 받을 수 없어요.'); return; }
+    var ask = Notification.requestPermission();                  /* must start inside the tap */
+    Promise.resolve(ask).then(function (perm) {
+      if (perm !== 'granted') throw { msg: '알림을 허용해야 받을 수 있어요. 아이폰 설정 → 알림 → 하루 한 장에서 켤 수 있어요.' };
+      return Promise.all([navigator.serviceWorker.ready, api('/push/key', null, 'GET')]);
+    }).then(function (r) {
+      var reg = r[0], key = r[1].key;
+      return reg.pushManager.getSubscription().then(function (s) { return s || reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(key) }); });
+    }).then(function (sub) {
+      var body = pushSettings(); body.subscription = sub.toJSON();
+      return api('/push/subscribe', body);
+    }).then(function () {
+      pCfg.on = true; savePush(); renderPush();
+      setPushMsg('켜졌어요. 매일 ' + pCfg.time + '에 알려 드릴게요.');
+    }).catch(function (e) { setPushMsg(e && e.msg ? e.msg : '알림을 켜지 못했어요 (' + ((e && (e.code || e.message)) || e) + ')'); renderPush(); });
+  }
+  function turnPushOff() {
+    pCfg.on = false; savePush(); renderPush();
+    if (!pushSupported()) return;
+    navigator.serviceWorker.ready.then(function (reg) { return reg.pushManager.getSubscription(); }).then(function (sub) {
+      if (!sub) return;
+      return api('/push/subscribe', { subscription: sub.toJSON(), remove: true }).catch(function () {}).then(function () { return sub.unsubscribe(); });
+    }).then(function () { setPushMsg('알림을 껐어요.'); }, function () { setPushMsg('알림을 껐어요.'); });
+  }
+  var pushTimer = null;
+  function pushChanged() {
+    savePush();
+    if (!pCfg.on) return;
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(function () {
+      api('/push/subscribe', pushSettings()).then(function () { setPushMsg('저장했어요. 매일 ' + pCfg.time + '에 알려 드릴게요.'); }, function () { setPushMsg('저장하지 못했어요. 잠시 뒤 다시 해 주세요.'); });
+    }, 600);
+  }
+  $('#pushT').addEventListener('click', function () { if (pCfg.on) turnPushOff(); else turnPushOn(); });
+  $('#pushSkip').addEventListener('click', function () { pCfg.skip = !pCfg.skip; renderPush(); pushChanged(); });
+  $('#pushTime').addEventListener('change', function (e) { if (e.target.value) { pCfg.time = e.target.value; pushChanged(); } });
+  $('#pushBody').addEventListener('input', function (e) { pCfg.body = e.target.value.slice(0, 80) || '오늘 하루, 어땠어요?'; pushChanged(); });
+  $('#pushTest').addEventListener('click', function () {
+    setPushMsg('보내는 중…');
+    api('/push/subscribe', pushSettings()).then(function () { return api('/push/test'); })
+      .then(function (j) { setPushMsg(j.sent ? '보냈어요. 몇 초 안에 알림이 와요.' : '받을 기기가 없어요. 알림을 껐다가 다시 켜 주세요.'); },
+            function (e) { setPushMsg(e && e.message === 'no device' ? '받을 기기가 없어요. 알림을 껐다가 다시 켜 주세요.' : '보내지 못했어요 (' + ((e && e.code) || '') + ')'); });
+  });
+
+  renderNotionCard(); renderPush();
+  checkServer().then(function () { setTimeout(function () { syncNow(false); }, 800); });
+  setInterval(function () { if (document.visibilityState === 'visible') syncNow(false); }, 5 * 60 * 1000);
+  window.addEventListener('online', function () { syncNow(false); });
+  document.addEventListener('visibilitychange', function () { syncNow(false); });
 
   /* ---------- backup: copy or save everything, paste or open to bring it back ---------- */
   var IN_CLAUDE = !!(window.claude && window.claude.use);

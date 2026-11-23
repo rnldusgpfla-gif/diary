@@ -1,6 +1,6 @@
 /* Keeps the app usable offline. The page itself is fetched fresh when online (so updates show up),
    everything else from this site is served from the cache first. */
-const CACHE = 'haru-v11';
+const CACHE = 'haru-v12';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-180.png', 'icons/icon-192.png'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
@@ -21,4 +21,20 @@ self.addEventListener('fetch', e => {
     if (r && (r.ok || r.type === 'opaque')) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); }
     return r;
   })));
+});
+
+/* Evening reminder sent by the user's own server */
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (_) { d = { body: e.data && e.data.text() }; }
+  e.waitUntil(self.registration.showNotification(d.title || '하루 한 장', {
+    body: d.body || '오늘 하루, 어땠어요?', icon: 'icons/icon-192.png', badge: 'icons/icon-192.png', tag: 'haru-evening', data: { url: './' }
+  }));
+});
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(cs => {
+    for (const c of cs) if ('focus' in c) return c.focus();
+    return self.clients.openWindow('./');
+  }));
 });
