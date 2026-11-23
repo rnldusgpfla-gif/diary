@@ -272,6 +272,7 @@ body.typing .done{display:inline-flex;align-items:center}
 .pill{display:inline-flex;align-items:center;font-size:12px;font-weight:500;background:var(--paper-2);color:var(--ink-soft);border-radius:999px;padding:2px 10px}
 .about{font-size:12px;color:var(--ink-soft);text-align:center}
 .view > .credit{font-size:11px;line-height:1.6;color:var(--ink-soft);text-align:center;padding:0 8px;margin-top:-16px}
+.push-msg{align-self:stretch;margin:0;padding:10px 12px;border-radius:10px;background:var(--a-yellow);color:var(--on-a);font-size:13px;line-height:1.5}
 .n-set{align-self:stretch}
 .n-body{display:flex;flex-direction:column;gap:8px;margin-top:6px}
 .n-body .input{flex:none;width:100%}
@@ -474,6 +475,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     <div class="card" id="pushCard">
       <div class="card-h"><h2>밤 알림</h2><button type="button" class="toggle" id="pushT" role="switch" aria-checked="false" aria-label="밤 알림"><span></span></button></div>
       <p>정한 시간에 일기 쓸 시간이라고 알려 드려요. 아이폰은 홈 화면에 추가한 앱에서만 받을 수 있어요.</p>
+      <p class="push-msg" id="pushMsg" role="status" hidden></p>
       <div class="n-body" id="pushSet" hidden>
         <label class="label" for="pushTime">시간</label>
         <input id="pushTime" class="input" type="time" value="22:00">
@@ -482,7 +484,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
         <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
       </div>
-      <p class="cap" id="pushMsg"></p>
     </div>
 
     <div class="card">
@@ -2206,7 +2207,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   var pCfg = { on: false, time: '22:00', body: '오늘 하루, 어땠어요?', skip: true };
   try { var _p = JSON.parse(localStorage.getItem(PKEY) || '{}'); if (_p && typeof _p === 'object') Object.keys(pCfg).forEach(function (f) { if (_p[f] !== undefined) pCfg[f] = _p[f]; }); } catch (e) {}
   function savePush() { try { localStorage.setItem(PKEY, JSON.stringify(pCfg)); } catch (e) {} }
-  function setPushMsg(t) { $('#pushMsg').textContent = t; }
+  function setPushMsg(t) { var m = $('#pushMsg'); m.textContent = t; m.hidden = !t; }
   function pushSupported() { return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window; }
   function renderPush() {
     var card = $('#pushCard');
@@ -2219,12 +2220,15 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   function b64ToU8(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   function pushSettings() { return { time: pCfg.time, tz: TZ, body: pCfg.body, title: '하루 한 장', skipIfWritten: !!pCfg.skip }; }
   function turnPushOn() {
-    if (!nReady()) { setPushMsg('먼저 위 노션 칸의 연결 설정을 해 주세요.'); return; }
-    if (!nCfg.push) { setPushMsg('중계 서버 코드를 새로 붙여넣고 KV를 연결해야 쓸 수 있어요.'); return; }
-    if (!pushSupported()) { setPushMsg(/iPhone|iPad/.test(navigator.userAgent) && !navigator.standalone ? '홈 화면에 추가한 앱에서만 알림을 받을 수 있어요.' : '이 브라우저는 알림을 받을 수 없어요.'); return; }
+    if (!nReady()) { setPushMsg('먼저 위 노션 칸의 연결 설정(서버 주소·키)을 해 주세요.'); return; }
+    if (!pushSupported()) { setPushMsg(/iPhone|iPad/.test(navigator.userAgent) && !navigator.standalone ? '홈 화면에 추가한 앱에서만 알림을 켤 수 있어요. 사파리 창이 아니라 홈 화면 아이콘으로 열어 주세요.' : '이 브라우저는 알림을 받을 수 없어요.'); return; }
+    $('#pushT').setAttribute('aria-checked', 'true');           /* show the tap landed */
+    setPushMsg('켜는 중…');
     var ask = Notification.requestPermission();                  /* must start inside the tap */
-    Promise.resolve(ask).then(function (perm) {
-      if (perm !== 'granted') throw { msg: '알림을 허용해야 받을 수 있어요. 아이폰 설정 → 알림 → 하루 한 장에서 켤 수 있어요.' };
+    Promise.all([Promise.resolve(ask), checkServer()]).then(function (r) {
+      if (r[0] !== 'granted') throw { msg: '알림 허용이 꺼져 있어요. 아이폰 설정 → 알림 → 하루 한 장에서 알림 허용을 켠 뒤 다시 눌러 주세요.' };
+      if (!r[1]) throw { msg: '중계 서버에 연결하지 못했어요. 인터넷과 서버 주소를 확인해 주세요.' };
+      if (!nCfg.push) throw { msg: '서버 준비가 아직이에요. Cloudflare에서 KV 연결(DIARY_KV)과 새 코드 붙여넣기·Deploy까지 끝나야 켤 수 있어요.' };
       return Promise.all([navigator.serviceWorker.ready, api('/push/key', null, 'GET')]);
     }).then(function (r) {
       var reg = r[0], key = r[1].key;
@@ -2235,7 +2239,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     }).then(function () {
       pCfg.on = true; savePush(); renderPush();
       setPushMsg('켜졌어요. 매일 ' + pCfg.time + '에 알려 드릴게요.');
-    }).catch(function (e) { setPushMsg(e && e.msg ? e.msg : '알림을 켜지 못했어요 (' + ((e && (e.code || e.message)) || e) + ')'); renderPush(); });
+    }).catch(function (e) { renderPush(); setPushMsg(e && e.msg ? e.msg : '알림을 켜지 못했어요 (' + ((e && (e.code || e.message)) || e) + ')'); });
   }
   function turnPushOff() {
     pCfg.on = false; savePush(); renderPush();
