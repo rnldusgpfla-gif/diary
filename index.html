@@ -241,6 +241,42 @@ body.typing .datebar{gap:5px}
 @keyframes wagBoth{0%,100%{transform:rotate(0)}18%{transform:rotate(6deg)}40%{transform:rotate(-6deg)}62%{transform:rotate(5deg)}82%{transform:rotate(-3deg)}}
 @keyframes wagCw{0%,100%{transform:rotate(0)}22%{transform:rotate(6deg)}44%{transform:rotate(1deg)}66%{transform:rotate(5deg)}86%{transform:rotate(1deg)}}
 @keyframes wagCcw{0%,100%{transform:rotate(0)}22%{transform:rotate(-6deg)}44%{transform:rotate(-1deg)}66%{transform:rotate(-5deg)}86%{transform:rotate(-1deg)}}
+/* 고양이 돌보기 */
+.cat-mail{position:absolute;left:-14px;top:-10px;z-index:4;width:24px;height:24px;border-radius:50%;background:var(--surface);color:var(--ink);display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.14);animation:mailBob 2.4s ease-in-out infinite}
+.cat-mail svg{width:15px;height:15px}
+.cat-mail::after{content:"";position:absolute;inset:-8px}
+@keyframes mailBob{50%{transform:translateY(-2px) rotate(-6deg)}}
+.day .paw{position:absolute;right:calc(50% - 23px);bottom:1px;width:14px;height:14px;color:#C99A6B;line-height:0}
+.day .paw svg{width:14px;height:14px;fill:currentColor}
+.cs-purr{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-size:13px;font-weight:600;color:var(--on-a);background:color-mix(in srgb,var(--surface) 80%,transparent);padding:3px 10px;border-radius:999px;animation:purr 1.4s ease forwards;z-index:3}
+@keyframes purr{0%{opacity:0;transform:translate(-50%,6px)}15%,75%{opacity:1;transform:translate(-50%,0)}100%{opacity:0}}
+.cs-hint{position:absolute;right:10px;bottom:8px;font-size:11px;color:color-mix(in srgb,var(--on-a) 55%,transparent)}
+.cs-fx{position:absolute;inset:0;pointer-events:none;z-index:3}
+.fx-heart{position:absolute;width:16px;height:16px;color:#FF7A93;animation:heartUp 1.1s ease-out forwards}
+.fx-heart svg{width:100%;height:100%;fill:currentColor}
+@keyframes heartUp{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1;transform:translateY(-8px) scale(1)}100%{opacity:0;transform:translateY(-54px) scale(.9)}}
+.fx-churu{position:absolute;width:30px;height:30px;left:16px;bottom:10px;animation:churu .7s cubic-bezier(.4,.1,.3,1) forwards}
+@keyframes churu{0%{opacity:0;transform:translate(0,0) rotate(-20deg)}20%{opacity:1}100%{opacity:0;transform:translate(var(--tx),var(--ty)) rotate(15deg) scale(.7)}}
+.cat-big.pet .cat-jump{animation:petSquish .5s ease-in-out}
+@keyframes petSquish{0%,100%{transform:scale(1,1)}35%{transform:scale(1.04,.95)}70%{transform:scale(.98,1.02)}}
+.cat-big{touch-action:none}
+.cs-care{display:flex;align-items:center;gap:12px}
+.cs-treat{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:42px;padding:0 16px 0 12px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600}
+.cs-treat svg{width:22px;height:22px}
+.cs-treat:disabled{background:var(--paper-2);color:var(--ink-soft);cursor:default}
+.cs-care-t{display:flex;flex-direction:column;font-size:12px;color:var(--ink-soft);line-height:1.5}
+.cs-letter{display:flex;align-items:center;gap:10px;min-height:48px;padding:0 14px;border-radius:12px;background:var(--surface);font-size:14px;font-weight:500;text-align:left}
+.cs-letter svg{width:20px;height:20px;flex:none}
+.cs-letter span{flex:1}
+.cs-new{font-style:normal;font-size:11px;font-weight:700;color:var(--on-a);background:var(--a-yellow);padding:2px 8px;border-radius:999px}
+.cletter{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:24px;background:rgba(14,14,20,.42);animation:csFade .2s ease}
+.cl-paper{width:100%;max-width:400px;max-height:86vh;overflow:auto;background:#FFFBF2;color:#2A2520;border-radius:6px 6px 14px 14px;padding:26px 24px 20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 18px 40px rgba(0,0,0,.25);background-image:linear-gradient(to bottom,transparent 31px,rgba(42,37,32,.07) 32px);background-size:100% 32px;background-position:0 58px;animation:letterIn .45s cubic-bezier(.2,.8,.3,1.1)}
+.cl-title{font-size:12px;font-weight:600;color:#9A8F80;letter-spacing:.02em}
+.cl-body{font-family:var(--w-font);font-size:16px;line-height:32px;white-space:pre-wrap;word-break:keep-all}
+.cl-body .sign{display:block;text-align:right;margin-top:4px}
+.cl-paper .btn{background:#F1E9DA;color:#2A2520}
+@keyframes letterIn{from{opacity:0;transform:translateY(24px) rotate(-2deg) scale(.96)}}
+@media (prefers-reduced-motion: reduce){.cat-mail,.fx-heart,.fx-churu,.cat-big.pet .cat-jump,.cl-paper{animation:none}.fx-heart,.fx-churu{display:none}}
 /* 고양이 자세히 (long press) */
 .csheet{position:fixed;inset:0;z-index:45;display:flex;align-items:flex-end;justify-content:center;background:rgba(14,14,20,.38);animation:csFade .2s ease}
 .cs-panel{width:100%;max-width:520px;max-height:92vh;overflow:auto;background:var(--paper);border-radius:22px 22px 0 0;padding:22px max(20px,env(safe-area-inset-left,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px;animation:csUp .28s cubic-bezier(.2,.8,.3,1)}
@@ -585,6 +621,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <div class="cal-head">
         <h2 id="calTitle" class="cal-title"></h2>
         <div class="cat" id="cat" data-state="silver" role="button" tabindex="0" aria-label="고양이 (누르면 꼬리를 흔들고, 꾹 누르면 자세히 보여요)">
+          <button type="button" class="cat-mail" id="catMail" aria-label="고양이 편지가 왔어요" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16v10H4z" fill="currentColor" opacity=".18"/><path class="ti" d="M4 7h16v10H4zM4 7l8 6 8-6"/></svg></button>
           <span class="cat-shadow"></span>
           <span class="cat-star s1"></span><span class="cat-star s2"></span>
           <span class="cat-jump"><span class="cat-body"><span class="cat-tail"><img class="cat-tl" src="images/cat-silver-tail.png" alt="" draggable="false" decoding="async"></span><img class="cat-bs" src="images/cat-silver-base.png" alt="" draggable="false" decoding="async"></span></span>
@@ -592,7 +629,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <button type="button" class="step" id="calPrev" aria-label="이전 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M14.5 6 8.5 12l6 6"/></svg></button>
         <button type="button" class="step" id="calNext" aria-label="다음 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M9.5 6l6 6-6 6"/></svg></button>
       </div>
-      <div id="catPrev" class="cat-prev" role="group" aria-label="고양이 상태 미리 보기" hidden><span class="cap">미리 보기</span><button type="button" class="chip filter" data-cat="gold">금</button><button type="button" class="chip filter" data-cat="silver">은</button><button type="button" class="chip filter" data-cat="brown">동</button><button type="button" class="chip filter" data-cat="none">사라짐</button><button type="button" class="chip filter" data-cat="">자동</button><button type="button" class="chip filter" data-cat="yay">저장 반응</button><button type="button" class="chip filter" data-cat="pop">짜잔</button><button type="button" class="chip filter" data-cat="wag">꼬리</button><button type="button" class="chip filter" data-cat="sheet">자세히</button></div>
+      <div id="catPrev" class="cat-prev" role="group" aria-label="고양이 상태 미리 보기" hidden><span class="cap">미리 보기</span><button type="button" class="chip filter" data-cat="gold">금</button><button type="button" class="chip filter" data-cat="silver">은</button><button type="button" class="chip filter" data-cat="brown">동</button><button type="button" class="chip filter" data-cat="none">사라짐</button><button type="button" class="chip filter" data-cat="">자동</button><button type="button" class="chip filter" data-cat="yay">저장 반응</button><button type="button" class="chip filter" data-cat="pop">짜잔</button><button type="button" class="chip filter" data-cat="wag">꼬리</button><button type="button" class="chip filter" data-cat="sheet">자세히</button><button type="button" class="chip filter" data-cat="letter">편지 새로</button></div>
       <div id="calGrid" class="cal-grid"></div>
     </div>
     <div>
@@ -640,7 +677,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v3.2</p>
+      <p class="about">하루 한 장 · v3.3</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -734,8 +771,12 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <div class="n-body" id="pushSet" hidden>
         <label class="label" for="pushTime">시간</label>
         <input id="pushTime" class="input" type="time" value="22:00">
+        <div class="lab-row"><p class="label" style="margin:0">고양이 말투로 보내기</p><button type="button" class="toggle" id="pushCat" role="switch" aria-checked="true" aria-label="고양이 말투로 보내기"><span></span></button></div>
+        <p class="cap" id="pushCatPv"></p>
+        <div class="n-body" id="pushBodyWrap" hidden>
         <label class="label" for="pushBody">알림 문구</label>
         <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" value="오늘 하루, 어땠어요?">
+        </div>
         <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
         <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
       </div>
@@ -811,6 +852,13 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <span class="cat-jump"><span class="cat-body"><span class="cat-tail"><img class="cat-tl" alt="" draggable="false" decoding="async"></span><img class="cat-bs" alt="" draggable="false" decoding="async"></span></span>
       </div>
       <p class="cs-away" id="csAway" hidden>산책 중…</p>
+      <span class="cs-purr" id="csPurr" hidden>골골골…</span>
+      <div class="cs-fx" id="csFx" aria-hidden="true"></div>
+      <span class="cs-hint" id="csHint">문질러서 쓰다듬어 주세요</span>
+    </div>
+    <div class="cs-care">
+      <button type="button" class="cs-treat" id="csTreat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17.5 16.5 8l2.2 2.2-9.5 9.5H7z" fill="#F7A86B"/><path d="M16.5 8 18 6.5a1.6 1.6 0 0 1 2.2 2.2l-1.5 1.5z" fill="#E7834A"/><path class="ti" d="M7 17.5V19.7h2.2"/></svg><span id="csTreatT">츄르 주기</span></button>
+      <div class="cs-care-t"><span id="csTreatN"></span><span id="csPetN"></span></div>
     </div>
     <div class="cs-name-row">
       <h2 id="csName" class="cs-name"></h2>
@@ -831,10 +879,18 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     </div>
     <div class="cs-week" id="csWeek" aria-label="최근 7일"></div>
     <p class="cs-next" id="csNext"></p>
+    <button type="button" class="cs-letter" id="csLetterBtn" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M4 7h16v10H4zM4 7l8 6 8-6"/></svg><span id="csLetterT"></span><i class="cs-new" id="csLetterNew" hidden>새 편지</i></button>
     <ul class="cs-guide">
-      <li><i class="g"></i>금 · 3일 이상 연속</li><li><i class="s"></i>은 · 2일 연속</li><li><i class="b"></i>동 · 하루</li><li><i class="n"></i>3일 동안 안 쓰면 산책을 떠나요</li>
+      <li><i class="g"></i>금 · 3일 이상 연속</li><li><i class="s"></i>은 · 2일 연속</li><li><i class="b"></i>동 · 하루</li><li><i class="n"></i>3일 동안 안 쓰면 산책을 떠나요 (간식을 챙겨 주면 기다려요)</li>
     </ul>
     <button type="button" class="btn" id="csClose">닫기</button>
+  </div>
+</div>
+<div id="catLetter" class="cletter" hidden>
+  <div class="cl-paper" role="dialog" aria-modal="true" aria-labelledby="clTitle">
+    <p class="cl-title" id="clTitle"></p>
+    <div class="cl-body" id="clBody"></div>
+    <button type="button" class="btn" id="clClose">답장 대신 꼭 안아 주기</button>
   </div>
 </div>
 <div id="catPop" class="catpop" role="status" aria-live="polite" hidden>
@@ -1384,7 +1440,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       var k = viewY + '-' + pad(viewM + 1) + '-' + pad(d);
       var has = !!entries[k];
       h += '<button type="button" class="day' + (k === t ? ' today' : '') + (has ? ' has' : '') + '" data-key="' + k + '"' + (k > t ? ' disabled' : '') +
-           ' aria-label="' + (viewM + 1) + '월 ' + d + '일' + (has ? ', 일기 있음' : '') + '"><b>' + d + '</b>' + (has ? '<i class="dot"></i>' : '') + '</button>';
+           ' aria-label="' + (viewM + 1) + '월 ' + d + '일' + (has ? ', 일기 있음' : '') + (fedOn(k) ? ', 간식 줌' : '') + '"><b>' + d + '</b>' + (has ? '<i class="dot"></i>' : '') + (fedOn(k) ? '<i class="paw"><svg viewBox="0 0 20 20" aria-hidden="true"><ellipse cx="10" cy="13.2" rx="4.6" ry="3.8"/><ellipse cx="4.6" cy="8.6" rx="1.9" ry="2.4"/><ellipse cx="8.2" cy="5.2" rx="1.9" ry="2.5"/><ellipse cx="11.8" cy="5.2" rx="1.9" ry="2.5"/><ellipse cx="15.4" cy="8.6" rx="1.9" ry="2.4"/></svg></i>' : '') + '</button>';
     }
     $('#calGrid').innerHTML = h;
     var cur = now0.getFullYear() * 12 + now0.getMonth();
@@ -1491,12 +1547,21 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (s.n >= 3) return 'gold';
     if (s.n === 2) return 'silver';
     if (s.n === 1) return 'brown';
-    return hasEntry(shift(todayKey(), -2)) ? 'brown' : 'none';
+    var t = todayKey();
+    if (hasEntry(shift(t, -2))) return 'brown';
+    return (fedOn(t) || fedOn(shift(t, -1))) ? 'brown' : 'none';   /* fed lately → waits instead of wandering off */
   }
   function catState() { return catForced || catEnergy(); }
+
+  /* ---------- 고양이 돌보기: 간식 · 쓰다듬기 · 주간 편지 (this device only) ---------- */
+  var CARE_KEY = 'hharu.care.v1', care = { treats: [], pets: {}, letters: [] };
+  try { var _c = JSON.parse(localStorage.getItem(CARE_KEY) || 'null'); if (_c && typeof _c === 'object') { care.treats = Array.isArray(_c.treats) ? _c.treats : []; care.pets = _c.pets && typeof _c.pets === 'object' ? _c.pets : {}; care.letters = Array.isArray(_c.letters) ? _c.letters : []; } } catch (e) {}
+  function saveCare() { try { localStorage.setItem(CARE_KEY, JSON.stringify(care)); } catch (e) {} }
+  function fedOn(k) { return care.treats.indexOf(k) >= 0; }
   function renderCat() {
     var c = $('#cat'), s = catState();
     if (c.getAttribute('data-state') !== s) catPaint(c, s);
+    ensureLetter(); renderMail();
     $$('#catPrev [data-cat]').forEach(function (b) { var v = b.getAttribute('data-cat'); if (v !== 'yay') b.setAttribute('aria-pressed', String((catForced || '') === v)); });
   }
   function catCheer() {
@@ -1555,6 +1620,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   (function () {
     var el = $('#cat'), t = null, x0 = 0, y0 = 0, long = false;
     el.addEventListener('pointerdown', function (e) {
+      if (e.target.closest('.cat-mail')) return;
       long = false; x0 = e.clientX; y0 = e.clientY;
       clearTimeout(t);
       t = setTimeout(function () { long = true; t = null; if (navigator.vibrate) try { navigator.vibrate(12); } catch (x) {} catSheetOpen(); }, 480);
@@ -1573,7 +1639,128 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       else if (e.key === ' ') { e.preventDefault(); catWag(el); }
     });
   })();
-  $('#catBig').addEventListener('click', function () { catWag($('#catBig')); });
+  /* the big cat in the sheet: tap = tail, rub = 쓰다듬기 */
+  var HEART = '<svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-9.2-9.4C1.7 7.9 3.8 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.8 1.2-1.7 2.8-2.8 4.8-2.8 3.4 0 5.5 3.4 4.4 6.6-1.7 4.8-9.2 9.4-9.2 9.4z"/></svg>';
+  function heartAt(x, y) {
+    var fx = $('#csFx'), h = document.createElement('span');
+    h.className = 'fx-heart'; h.innerHTML = HEART;
+    h.style.left = (x - 8) + 'px'; h.style.top = (y - 8) + 'px';
+    fx.appendChild(h); setTimeout(function () { h.remove(); }, 1200);
+  }
+  function petCount() { return care.pets[todayKey()] || 0; }
+  (function () {
+    var el = $('#catBig'), down = false, moved = 0, lx = 0, ly = 0, sinceHeart = 0, petted = false;
+    el.addEventListener('pointerdown', function (e) { down = true; moved = 0; sinceHeart = 0; petted = false; lx = e.clientX; ly = e.clientY; try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+    el.addEventListener('pointermove', function (e) {
+      if (!down) return;
+      var dd = Math.hypot(e.clientX - lx, e.clientY - ly); lx = e.clientX; ly = e.clientY;
+      moved += dd; sinceHeart += dd;
+      if (moved > 24 && sinceHeart > 70) {
+        sinceHeart = 0;
+        var r = $('#csFx').getBoundingClientRect();
+        heartAt(e.clientX - r.left + (Math.random() * 30 - 15), e.clientY - r.top - 20);
+        el.classList.remove('pet'); void el.offsetWidth; el.classList.add('pet');
+      }
+      if (!petted && moved > 160) {
+        petted = true;
+        var k = todayKey(); care.pets[k] = (care.pets[k] || 0) + 1;
+        Object.keys(care.pets).sort().slice(0, -60).forEach(function (o) { delete care.pets[o]; });
+        saveCare(); renderCare();
+        var pu = $('#csPurr'); pu.hidden = true; void pu.offsetWidth; pu.hidden = false;
+        clearTimeout(pu.t); pu.t = setTimeout(function () { pu.hidden = true; }, 1400);
+        if (navigator.vibrate) try { navigator.vibrate([8, 40, 8, 40, 8]); } catch (x) {}
+        $('#csHint').hidden = true;
+      }
+    });
+    function up() { if (!down) return; down = false; if (moved < 12) catWag(el); }
+    el.addEventListener('pointerup', up); el.addEventListener('pointercancel', function () { down = false; });
+    el.addEventListener('animationend', function (e) { if (e.animationName === 'petSquish') el.classList.remove('pet'); });
+  })();
+  function renderCare() {
+    var t = todayKey(), fed = fedOn(t), away = catState() === 'none';
+    $('#csTreat').disabled = fed;
+    $('#csTreatT').textContent = fed ? '오늘 간식 줬어요' : (away ? '츄르로 불러 보기' : '츄르 주기');
+    var streak = 0, k = fed ? t : shift(t, -1);
+    while (fedOn(k)) { streak++; k = shift(k, -1); }
+    $('#csTreatN').textContent = streak ? '간식 ' + streak + '일 연속으로 챙겨 줬어요' : '하루에 한 번 간식을 줄 수 있어요';
+    var pc = petCount();
+    $('#csPetN').textContent = pc ? '오늘 ' + pc + '번 쓰다듬었어요' : '고양이를 문질러서 쓰다듬어 보세요';
+  }
+  $('#csTreat').addEventListener('click', function () {
+    var t = todayKey();
+    if (fedOn(t)) return;
+    var wasAway = catState() === 'none';
+    care.treats.push(t); care.treats = care.treats.sort().slice(-120); saveCare();
+    var fx = $('#csFx'), st = $('#csFx').getBoundingClientRect();
+    var c = document.createElement('span'); c.className = 'fx-churu';
+    c.innerHTML = $('#csTreat svg').outerHTML;
+    c.style.setProperty('--tx', (st.width / 2 - 40) + 'px'); c.style.setProperty('--ty', (-st.height * 0.45) + 'px');
+    fx.appendChild(c); setTimeout(function () { c.remove(); }, 800);
+    setTimeout(function () {
+      if (wasAway) { catSheetOpen(); toast(catWho() + ' 간식 냄새를 맡고 돌아왔어요!'); }
+      var big = $('#catBig'); big.classList.remove('yay'); void big.offsetWidth; big.classList.add('yay');
+      for (var i = 0; i < 5; i++) (function (i) { setTimeout(function () { heartAt(st.width / 2 + (Math.random() * 70 - 35), st.height * 0.45 + Math.random() * 20); }, i * 110); })(i);
+      renderCare(); renderCat();
+      if (!$('#v-archive').hidden) renderCal();
+      if (!wasAway) toast(catWho() + ' 냠냠 맛있게 먹었어요');
+    }, 650);
+  });
+  $('#catBig').addEventListener('animationend', function (e) { if (e.animationName === 'catYay') $('#catBig').classList.remove('yay'); });
+
+  /* 주간 편지: every Monday the cat writes about last week */
+  function monday(k) { var dd = parseKey(k), w = (dd.getDay() + 6) % 7; return shift(k, -w); }
+  function makeLetter(ws) {
+    var days = [], i; for (i = 0; i < 7; i++) days.push(shift(ws, i));
+    var wrote = days.filter(hasEntry), c = wrote.length, nm = catNm();
+    var L = ['안녕, 나 ' + nm + (batchim(nm) ? '이야.' : '야.')];
+    if (!c) L.push('지난주엔 일기장이 조용했어. 바빴지? 괜찮아, 나는 여기서 기다리고 있었어.');
+    else if (c <= 2) L.push('지난주에는 일기를 ' + c + '번 써 줬어. 들려줘서 고마워.');
+    else if (c <= 5) L.push('지난주에는 일기를 ' + c + '일이나 써 줬어! 덕분에 나도 기운이 났어.');
+    else L.push('지난주엔 거의 매일 써 줬잖아. 진짜 최고야!');
+    if (c) {
+      var best = wrote.slice().sort(function (a, b) { var ea = entries[a], eb = entries[b]; return ((eb.rating || 0) - (ea.rating || 0)) || ((eb.body || '').length - (ea.body || '').length); })[0];
+      var line = ((entries[best].body || '').split('\n').filter(function (s) { return s.trim(); })[0] || '').trim();
+      if (line) {
+        if (line.length > 26) line = line.slice(0, 26) + '…';
+        L.push(WD[parseKey(best).getDay()] + '요일 일기 기억나? "' + line + '" 그 얘기 좋았어.');
+      }
+      var tc = {}; wrote.forEach(function (k) { (entries[k].tags || []).forEach(function (g) { tc[g] = (tc[g] || 0) + 1; }); });
+      var top = Object.keys(tc).sort(function (a, b) { return tc[b] - tc[a]; })[0];
+      if (top && tc[top] >= 2) L.push('요즘 \'' + top + '\' 얘기를 자주 하더라.');
+    }
+    var fed = days.filter(fedOn).length;
+    if (fed) L.push('간식도 ' + fed + '번이나 챙겨 줘서 배불러.');
+    L.push(c ? '이번 주에도 기다릴게.' : '이번 주엔 한 장만 들려줘. 기다릴게.');
+    return L.join('\n');
+  }
+  function ensureLetter() {
+    var ws = shift(monday(todayKey()), -7);
+    if (care.letters.some(function (l) { return l.week === ws; })) return;
+    var any = Object.keys(entries).some(function (k) { return hasEntry(k) && k < shift(ws, 7); });
+    if (!any) return;
+    care.letters.push({ week: ws, text: makeLetter(ws), read: false });
+    care.letters = care.letters.slice(-12); saveCare();
+  }
+  function latestLetter() { return care.letters[care.letters.length - 1] || null; }
+  function letterTitle(l) { var a = parseKey(l.week), b = parseKey(shift(l.week, 6)); return (a.getMonth() + 1) + '월 ' + a.getDate() + '일 ~ ' + (a.getMonth() === b.getMonth() ? '' : (b.getMonth() + 1) + '월 ') + b.getDate() + '일의 편지'; }
+  function renderMail() {
+    var l = latestLetter();
+    $('#catMail').hidden = !(l && !l.read);
+    $('#csLetterBtn').hidden = !l;
+    if (l) { $('#csLetterT').textContent = catNm() + '의 편지 · ' + letterTitle(l).replace('의 편지', ''); $('#csLetterNew').hidden = !!l.read; }
+  }
+  function openLetter() {
+    var l = latestLetter(); if (!l) return;
+    $('#clTitle').textContent = letterTitle(l);
+    $('#clBody').innerHTML = esc(l.text) + '<span class="sign">— ' + esc(catNm()) + '</span>';
+    $('#catLetter').hidden = false;
+    l.read = true; saveCare(); renderMail();
+  }
+  $('#catMail').addEventListener('click', function (e) { e.stopPropagation(); openLetter(); });
+  $('#catMail').addEventListener('pointerdown', function (e) { e.stopPropagation(); });
+  $('#csLetterBtn').addEventListener('click', openLetter);
+  $('#clClose').addEventListener('click', function () { $('#catLetter').hidden = true; toast(catWho() + ' 좋아서 골골거려요'); });
+  $('#catLetter').addEventListener('click', function (e) { if (e.target === e.currentTarget) $('#catLetter').hidden = true; });
 
   /* 고양이 자세히: name, mood, streak numbers and the last 7 days */
   function bestStreak() {
@@ -1595,7 +1782,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     sh.setAttribute('data-state', s);
     catPaint($('#catBig'), s);
     $('#catBig').hidden = s === 'none'; $('#csAway').hidden = s !== 'none';
-    $('#csAway').textContent = catNm() + ' 산책 중…';
+    $('#csAway').textContent = catNm() + (batchim(catNm()) ? '이는' : '는') + ' 산책 중…';
     $('#csName').textContent = catNm();
     $('#csBadge').textContent = s === 'none' ? '산책 중' : CAT_NAME[s] + ' 고양이';
     $('#csMood').textContent = CAT_MOOD[s];
@@ -1612,6 +1799,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#csWeek').innerHTML = wk;
     $('#csNext').textContent = catNext(s, si);
     $('#csNameForm').hidden = true; $('#csRename').hidden = false;
+    renderCare(); renderMail(); $('#csHint').hidden = petCount() > 0 || s === 'none';
     sh.hidden = false;
     setTimeout(function () { catWag($('#catBig')); }, 380);
   }
@@ -1640,6 +1828,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (v === 'pop') { var st = catState(); catPopShow(st === 'none' ? 'gold' : st, null); return; }
     if (v === 'wag') { catWag($('#cat')); return; }
     if (v === 'sheet') { catSheetOpen(); return; }
+    if (v === 'letter') { var ws = shift(monday(todayKey()), -7); care.letters = care.letters.filter(function (l) { return l.week !== ws; }); saveCare(); ensureLetter(); renderMail(); return; }
     catForced = v || null; renderCat();
   });
 
@@ -2730,7 +2919,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
   /* ---------- evening reminder (Web Push from the user's server) ---------- */
   var PKEY = 'hharu.push.v1';
-  var pCfg = { on: false, time: '22:00', body: '오늘 하루, 어땠어요?', skip: true };
+  var pCfg = { on: false, time: '22:00', body: '오늘 하루, 어땠어요?', skip: true, cat: true, sent: '' };
   try { var _p = JSON.parse(localStorage.getItem(PKEY) || '{}'); if (_p && typeof _p === 'object') Object.keys(pCfg).forEach(function (f) { if (_p[f] !== undefined) pCfg[f] = _p[f]; }); } catch (e) {}
   function savePush() { try { localStorage.setItem(PKEY, JSON.stringify(pCfg)); } catch (e) {} }
   function setPushMsg(t) { var m = $('#pushMsg'); m.textContent = t; m.hidden = !t; }
@@ -2741,11 +2930,33 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#pushT').setAttribute('aria-checked', String(!!pCfg.on));
     $('#pushSkip').setAttribute('aria-checked', String(!!pCfg.skip));
     $('#pushTime').value = pCfg.time; $('#pushBody').value = pCfg.body;
+    $('#pushCat').setAttribute('aria-checked', String(!!pCfg.cat));
+    $('#pushBodyWrap').hidden = !!pCfg.cat;
+    $('#pushCatPv').hidden = !pCfg.cat;
+    if (pCfg.cat) $('#pushCatPv').textContent = '예: ' + catLine();
     $('#pushSet').hidden = !pCfg.on;
     var sv = $('#svPush'); if (sv) sv.textContent = pCfg.on ? pCfg.time : '꺼짐';
   }
   function b64ToU8(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
-  function pushSettings() { return { time: pCfg.time, tz: TZ, body: pCfg.body, title: '하루 한 장', skipIfWritten: !!pCfg.skip }; }
+  /* 고양이 말투: a new line each day the app is opened, matching the cat's state */
+  function catLine() {
+    var nm = catNm(), who = catWho(), s = catEnergy(), n = streakInfo().n, L;
+    if (s === 'none') L = [who + ' 산책을 나갔어요. 일기를 쓰면 돌아올지도 몰라요', who + ' 창밖만 보고 있어요… 오늘 한 줄 들려줄래요?'];
+    else if (s === 'gold') L = ['금 고양이 ' + nm + ', 오늘도 쓰면 ' + (n + 1) + '일 연속이에요!', who + ' 신나서 일기장 앞에서 폴짝거려요'];
+    else if (s === 'silver') L = ['하루만 더 쓰면 ' + who + ' 금 고양이가 돼요', who + ' 몽글몽글 기다리고 있어요. 오늘 얘기 들려줄래요?'];
+    else L = [who + ' 기다리고 있어요… 오늘 얘기 들려줄래요?', who + ' 꼬리를 흔들며 일기장 앞에 앉아 있어요'];
+    L.push(nm + ': 오늘 하루 어땠어? 한 줄만 들려줘', '오늘 있었던 일, ' + nm + '한테 살짝 말해 줄래요?');
+    var day = parseInt(todayKey().replace(/-/g, ''), 10);
+    return L[day % L.length];
+  }
+  function pushBodyNow() { return pCfg.cat ? catLine() : pCfg.body; }
+  function pushSettings() { return { time: pCfg.time, tz: TZ, body: pushBodyNow(), title: '하루 한 장', skipIfWritten: !!pCfg.skip }; }
+  function refreshCatPush() {
+    if (!pCfg.on || !pCfg.cat || !nReady() || !nCfg.push) return;
+    var b = catLine();
+    if (b === pCfg.sent) return;
+    api('/push/subscribe', pushSettings()).then(function () { pCfg.sent = b; savePush(); }, function () {});
+  }
   function turnPushOn() {
     if (!nReady()) { setPushMsg('먼저 위 노션 칸의 연결 설정(서버 주소·키)을 해 주세요.'); return; }
     if (!pushSupported()) { setPushMsg(/iPhone|iPad/.test(navigator.userAgent) && !navigator.standalone ? '홈 화면에 추가한 앱에서만 알림을 켤 수 있어요. 사파리 창이 아니라 홈 화면 아이콘으로 열어 주세요.' : '이 브라우저는 알림을 받을 수 없어요.'); return; }
@@ -2788,6 +2999,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   }
   $('#pushT').addEventListener('click', function () { if (pCfg.on) turnPushOff(); else turnPushOn(); });
   $('#pushSkip').addEventListener('click', function () { pCfg.skip = !pCfg.skip; renderPush(); pushChanged(); });
+  $('#pushCat').addEventListener('click', function () { pCfg.cat = !pCfg.cat; renderPush(); pushChanged(); });
   $('#pushTime').addEventListener('change', function (e) { if (e.target.value) { pCfg.time = e.target.value; pushChanged(); } });
   $('#pushBody').addEventListener('input', function (e) { pCfg.body = e.target.value.slice(0, 80) || '오늘 하루, 어땠어요?'; pushChanged(); });
   $('#pushTest').addEventListener('click', function () {
@@ -2798,7 +3010,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   });
 
   renderNotionCard(); renderPush();
-  checkServer().then(function () { setTimeout(function () { syncNow(false); }, 800); });
+  checkServer().then(function () { setTimeout(function () { syncNow(false); }, 800); setTimeout(refreshCatPush, 4000); });
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) setTimeout(refreshCatPush, 3000); });
   setInterval(function () { if (document.visibilityState === 'visible') syncNow(false); }, 5 * 60 * 1000);
   window.addEventListener('online', function () { syncNow(false); });
   document.addEventListener('visibilitychange', function () { syncNow(false); });
