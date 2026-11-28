@@ -677,7 +677,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v3.3</p>
+      <p class="about">하루 한 장 · v3.4</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -1618,21 +1618,22 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     el.addEventListener('animationend', function (e) { if (/^wag/.test(e.animationName)) el.classList.remove('wag'); });
   });
   (function () {
-    var el = $('#cat'), t = null, x0 = 0, y0 = 0, long = false;
+    var el = $('#cat'), t = null, x0 = 0, y0 = 0, long = false, tDown = 0, taps = 0;
+    function catTapHint() { if (++taps === 2 || taps === 6) toast('꾹 누르고 있으면 ' + catNm() + ' 카드가 열려요'); }
     el.addEventListener('pointerdown', function (e) {
       if (e.target.closest('.cat-mail')) return;
-      long = false; x0 = e.clientX; y0 = e.clientY;
+      long = false; x0 = e.clientX; y0 = e.clientY; tDown = Date.now();
       clearTimeout(t);
       t = setTimeout(function () { long = true; t = null; if (navigator.vibrate) try { navigator.vibrate(12); } catch (x) {} catSheetOpen(); }, 480);
     });
-    el.addEventListener('pointermove', function (e) { if (t && Math.hypot(e.clientX - x0, e.clientY - y0) > 10) { clearTimeout(t); t = null; } });
-    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) {
-      el.addEventListener(ev, function (e) {
-        if (!t) return;
-        clearTimeout(t); t = null;
-        if (ev === 'pointerup' && !long) catWag(el);
-      });
+    el.addEventListener('pointermove', function (e) { if (t && Math.hypot(e.clientX - x0, e.clientY - y0) > 14) { clearTimeout(t); t = null; } });
+    /* iPhone may cancel the pointer while a finger rests on a picture, so only lifting the finger or moving it ends a press */
+    el.addEventListener('pointerup', function () {
+      if (!t) return;
+      clearTimeout(t); t = null;
+      if (!long) { catWag(el); catTapHint(); }
     });
+    el.addEventListener('touchend', function () { if (!t) return; clearTimeout(t); t = null; if (!long) { catWag(el); catTapHint(); } }, { passive: true });
     el.addEventListener('contextmenu', function (e) { e.preventDefault(); });
     el.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') { e.preventDefault(); catSheetOpen(); }
