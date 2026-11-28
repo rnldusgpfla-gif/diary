@@ -456,6 +456,12 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   <section id="v-more" class="view" aria-labelledby="moreH" hidden>
     <h1 id="moreH" class="page-t">설정</h1>
 
+    <div class="card">
+      <h2>처음 화면</h2>
+      <p>앱을 열면 가장 먼저 보이는 화면이에요.</p>
+      <div id="startList" class="chips fill" role="group" aria-label="처음 화면"></div>
+    </div>
+
     <div class="card t-blue">
       <div class="card-h"><h2>노션</h2><span class="pill" id="notionPill">연결 안 됨</span></div>
       <p>저장한 일기가 노션 '💻 다이어리' 표의 같은 날짜 줄에 자동으로 들어가요. 본문은 그 날 페이지에, 첫 줄과 태그는 summary·태그 칸에 담겨요.</p>
@@ -581,7 +587,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
       <p class="cap">가져오면 같은 날짜는 더 최근에 고친 쪽이 남아요.</p>
     </div>
-    <p class="about">하루 한 장 · v2.0</p>
+    <p class="about">하루 한 장 · v2.1</p>
     <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
   </section>
 </main>
@@ -803,6 +809,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       if (typeof o.sx === 'string' && SXMAP[o.sx]) prefs.sx = o.sx;
       if (o.typeSound === true) prefs.typeSound = 'type';
       else if (typeof o.typeSound === 'string' && SOUNDS.some(function (s) { return s[0] === o.typeSound; })) prefs.typeSound = o.typeSound;
+      if (START_TABS.some(function (s) { return s[0] === o.start; })) prefs.start = o.start;
       if (Array.isArray(o.favTags)) prefs.favTags = o.favTags.filter(function (t) { return typeof t === 'string' && t; }).slice(0, 20);
     } catch (e) {}
   }
@@ -1236,7 +1243,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#clearSamples').hidden = !samples;
     renderLook();
     renderFav();
-    renderSnd();
+    renderSnd(); renderStart();
     renderLockCard();
   }
 
@@ -1449,6 +1456,20 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     } catch (e) {}
   }
   ['touchend', 'click', 'keydown'].forEach(function (ev) { document.addEventListener(ev, twUnlock, true); });
+  var START_TABS = [['write', '쓰기'], ['notes', '끄적'], ['archive', '모아보기']];
+  function renderStart() {
+    var cur = prefs.start || 'write';
+    $('#startList').innerHTML = START_TABS.map(function (s) {
+      return '<button type="button" class="chip filter" data-start="' + s[0] + '" aria-pressed="' + (cur === s[0]) + '">' + s[1] + '</button>';
+    }).join('');
+  }
+  $('#startList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-start]');
+    if (!b) return;
+    prefs.start = b.getAttribute('data-start');
+    savePrefs(); renderStart();
+    toast('다음에 열면 ' + b.textContent + ' 화면부터 보여요');
+  });
   function renderSnd() {
     $('#sndList').innerHTML = SOUNDS.map(function (s) {
       return '<button type="button" class="chip filter" data-snd="' + s[0] + '" aria-pressed="' + ((prefs.typeSound || '') === s[0]) + '">' + s[1] + '</button>';
@@ -1908,7 +1929,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     savePrefs(); applyPrefs(); renderLook();
   });
   $('#resetLook').addEventListener('click', function () {
-    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound };
+    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound, start: prefs.start };
     savePrefs(); applyPrefs(); renderLook();
     toast('기본값으로 되돌렸어요');
   });
@@ -2382,7 +2403,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   buildPad();
   applyPrefs();
   renderQuote();
-  setTab('write');
+  setTab(prefs.start || 'write');
   if (lock.enabled) lockNow();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { sizeSheet(); autosize(); });
 })();
