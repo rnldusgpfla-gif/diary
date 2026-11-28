@@ -122,6 +122,19 @@ h1,h2,p{margin:0}
 .stamp{flex:1;min-width:0;font-size:24px;font-weight:400;letter-spacing:-.02em;line-height:1.25;color:var(--ink);-webkit-font-smoothing:antialiased}
 .done{display:none;min-height:36px;padding:0 16px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:600}
 body.typing .done{display:inline-flex;align-items:center}
+.hist{display:none}
+body.typing .hist{display:grid}
+body.typing #prevDay,body.typing #nextDay{display:none}
+body.typing .stamp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.typing .datebar{gap:5px}
+.toast-act{margin-left:10px;padding:2px 2px 2px 10px;border-left:1px solid color-mix(in srgb,var(--paper) 35%,transparent);color:var(--a-yellow);font-weight:700}
+.trash{align-self:stretch;display:flex;flex-direction:column;gap:8px}
+.trash:empty{display:none}
+.tr-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;background:var(--paper)}
+.tr-t{flex:1;min-width:0;display:flex;flex-direction:column}
+.tr-d{font-size:13px;font-weight:600}
+.tr-b{font-size:13px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-row button{flex:none;min-height:34px;padding:0 14px;border-radius:999px;background:var(--ink);color:var(--paper);font-size:13px;font-weight:600}
 .streak{font-size:12px;font-weight:600;color:var(--on-a);background:var(--a-yellow);padding:2px 10px;border-radius:999px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .subline{display:flex;flex-wrap:wrap;align-items:center;margin-top:2px;gap:2px 8px;font-size:13px;line-height:1.5}
 .quote{color:var(--ink-soft);min-width:0}
@@ -381,6 +394,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <time id="dateStamp" class="stamp"></time>
         <button type="button" class="step" id="prevDay" aria-label="전날로 가기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M14.5 6 8.5 12l6 6"/></svg></button>
         <button type="button" class="step" id="nextDay" aria-label="다음날로 가기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M9.5 6l6 6-6 6"/></svg></button>
+        <button type="button" class="step hist" id="undoBtn" aria-label="되돌리기" disabled><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M9 7.5H4.5V3M4.8 7.4A8 8 0 1 1 4 12"/></svg></button>
+        <button type="button" class="step hist" id="redoBtn" aria-label="다시 하기" disabled><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M15 7.5h4.5V3M19.2 7.4A8 8 0 1 0 20 12"/></svg></button>
         <button type="button" class="step mic" id="micBody" aria-label="말로 받아쓰기" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M12 3.5a2.8 2.8 0 0 1 2.8 2.8v5.4a2.8 2.8 0 0 1-5.6 0V6.3A2.8 2.8 0 0 1 12 3.5zM6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v3.5"/></svg></button>
         <button type="button" class="done" id="doneBtn">완료</button>
       </div>
@@ -507,7 +522,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v2.5</p>
+      <p class="about">하루 한 장 · v2.6</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -633,6 +648,13 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <p id="storeLine"></p>
       <p id="storeStat" class="cap"></p>
       <button type="button" class="btn" id="clearSamples" hidden>예시 일기 지우기</button>
+    </div>
+
+    <div class="card">
+      <h2>최근 지운 일기</h2>
+      <p>지운 일기는 30일 동안 여기 남아 있어요. 되살리면 그날 일기로 돌아가요.</p>
+      <p class="cap" id="trashEmpty">지운 일기가 없어요.</p>
+      <div id="trashList" class="trash"></div>
     </div>
 
     <div class="card">
@@ -846,12 +868,18 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
   /* ---------- toast ---------- */
   var toastT = null;
-  function toast(m) {
+  function toast(m, act, fn) {
     var t = $('#toast');
     t.textContent = m;
+    if (act && fn) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'toast-act'; b.textContent = act;
+      b.addEventListener('click', function () { t.hidden = true; fn(); });
+      t.appendChild(b);
+    }
     t.hidden = false;
     clearTimeout(toastT);
-    toastT = setTimeout(function () { t.hidden = true; }, 2400);
+    toastT = setTimeout(function () { t.hidden = true; }, act ? 7000 : 2400);
   }
 
   /* ---------- streak ---------- */
@@ -893,11 +921,50 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   function setState(s) { $('#saveState').textContent = s; }
   function clock(ts) { var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
 
+  /* ---------- 최근 지운 일기: kept 30 days so a mistake can be undone ---------- */
+  var TRASH_KEY = 'hharu.trash.v1', TRASH_DAYS = 30;
+  function trashLoad() {
+    try { var a = JSON.parse(localStorage.getItem(TRASH_KEY) || '[]'); if (!Array.isArray(a)) return []; var lim = Date.now() - TRASH_DAYS * 864e5; return a.filter(function (x) { return x && x.e && x.at > lim; }); } catch (e) { return []; }
+  }
+  function trashSave(a) { try { localStorage.setItem(TRASH_KEY, JSON.stringify(a.slice(0, 30))); } catch (e) {} }
+  function trashPut(e) {
+    if (!e || !(e.body || '').trim() && !(e.photos || []).length) return;
+    var a = trashLoad().filter(function (x) { return !(x.e.date === e.date && x.e.body === e.body); });
+    a.unshift({ at: Date.now(), e: JSON.parse(JSON.stringify(e)) });
+    trashSave(a);
+  }
+  function restoreEntry(e, at) {
+    var cur = entries[e.date], now = Date.now();
+    var r = JSON.parse(JSON.stringify(e));
+    if (cur && (cur.body || '').trim() && cur.body !== r.body) {
+      r.body = cur.body.replace(/\s+$/, '') + '\n\n' + r.body;
+      r.photos = (cur.photos || []).concat(r.photos || []);
+      r.tags = (cur.tags || []).concat((r.tags || []).filter(function (t) { return (cur.tags || []).indexOf(t) < 0; }));
+      r.rating = cur.rating || r.rating;
+    }
+    r.updatedAt = now; r.synced = false; delete r.notionSkip;
+    entries[e.date] = r;
+    persist();
+    if (at) trashSave(trashLoad().filter(function (x) { return x.at !== at; }));
+    if (typeof scheduleNotion === 'function') scheduleNotion();
+    if (editKey === e.date && !$('#v-write').hidden) { loadDraft(); renderWrite(); }
+    return !!(cur && (cur.body || '').trim() && cur.body !== e.body);
+  }
+  function renderTrash() {
+    var box = $('#trashList'); if (!box) return;
+    var a = trashLoad();
+    $('#trashEmpty').hidden = a.length > 0;
+    box.innerHTML = a.map(function (x) {
+      var p = x.e.date.split('-');
+      return '<div class="tr-row"><div class="tr-t"><span class="tr-d">' + (+p[1]) + '월 ' + (+p[2]) + '일 일기</span><span class="tr-b">' + esc((x.e.body || '').split('\n')[0] || '사진만 있는 일기') + '</span></div><button type="button" data-at="' + x.at + '">되살리기</button></div>';
+    }).join('');
+  }
+
   function commit() {
     timer = null;
     var empty = !draft.title.trim() && !draft.body.trim() && !draft.photos.length && !draft.tags.length && !draft.rating;
     if (empty) {
-      if (entries[editKey]) { delete entries[editKey]; persist(); if (typeof markGone === 'function') markGone('e:' + editKey); }
+      if (entries[editKey]) { var gone = entries[editKey]; trashPut(gone); delete entries[editKey]; persist(); if (typeof markGone === 'function') markGone('e:' + editKey); }
       setState('');
       $('#delZone').hidden = true;
       renderStreak();
@@ -1222,6 +1289,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     renderLook();
     renderFav();
     renderLockCard();
+    renderTrash();
     renderSetValues();
   }
 
@@ -1770,6 +1838,49 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); $('#body').focus(); }
   });
   $('#body').addEventListener('input', function (e) { draft.body = e.target.value; autosize(); schedule(); });
+
+  /* ---------- 되돌리기 / 다시 하기 while writing (buttons, ⌘Z, and iPhone's shake / three-finger swipe) ---------- */
+  var hist = { key: null, undo: [], redo: [], last: 0 };
+  function histState() { var el = $('#body'); return { v: el.value, s: el.selectionStart, e: el.selectionEnd }; }
+  function histBtns() { $('#undoBtn').disabled = !hist.undo.length; $('#redoBtn').disabled = !hist.redo.length; }
+  function histCheck() { if (hist.key !== editKey) { hist.key = editKey; hist.undo = []; hist.redo = []; hist.last = 0; histBtns(); } }
+  function histSnap(force) {
+    histCheck();
+    var now = Date.now(), quick = now - hist.last < 1200;
+    hist.last = now;
+    if (quick && !force) return;                                 /* one step per burst of typing */
+    var st = histState(), top = hist.undo[hist.undo.length - 1];
+    if (top && top.v === st.v) return;
+    hist.undo.push(st); if (hist.undo.length > 300) hist.undo.shift();
+    hist.redo = []; histBtns();
+  }
+  function histGo(dir) {
+    histCheck();
+    var from = dir === 'undo' ? hist.undo : hist.redo, to = dir === 'undo' ? hist.redo : hist.undo;
+    var cur = histState(), st = from.pop();
+    while (st && st.v === cur.v) st = from.pop();
+    if (!st) { histBtns(); return; }
+    to.push(cur);
+    var el = $('#body');
+    el.value = st.v;
+    try { el.setSelectionRange(st.s, st.e); } catch (x) {}
+    hist.last = 0;
+    draft.body = st.v; autosize(); schedule();
+    histBtns();
+  }
+  $('#body').addEventListener('beforeinput', function (e) {
+    if (e.inputType === 'historyUndo' || e.inputType === 'historyRedo') { e.preventDefault(); histGo(e.inputType === 'historyUndo' ? 'undo' : 'redo'); return; }
+    var el = e.target, sel = (el.selectionEnd || 0) - (el.selectionStart || 0);
+    histSnap(sel > 1 || /^(deleteByCut|insertFromPaste|insertFromDrop|deleteWord|deleteSoftLine|deleteHardLine|insertReplacementText)/.test(e.inputType));
+  });
+  $('#body').addEventListener('keydown', function (e) {
+    if ((e.metaKey || e.ctrlKey) && !e.altKey && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); histGo(e.shiftKey ? 'redo' : 'undo'); }
+  });
+  ['#undoBtn', '#redoBtn'].forEach(function (s, i) {
+    var b = $(s);
+    b.addEventListener('pointerdown', function (e) { e.preventDefault(); });   /* keep the keyboard up */
+    b.addEventListener('click', function () { histGo(i ? 'redo' : 'undo'); $('#body').focus(); });
+  });
   window.addEventListener('resize', function () { sizeSheet(); autosize(); });
 
   document.addEventListener('focusin', function (e) {
@@ -1879,13 +1990,25 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
   $('#delAsk').addEventListener('click', function () { $('#delAsk').hidden = true; $('#delConfirm').hidden = false; $('#delYes').focus(); });
   $('#delNo').addEventListener('click', resetDelete);
+  $('#trashList').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-at]');
+    if (!b) return;
+    var at = +b.getAttribute('data-at'), x = trashLoad().filter(function (t) { return t.at === at; })[0];
+    if (!x) return;
+    var merged = restoreEntry(x.e, at);
+    renderTrash(); renderSetValues();
+    var p = x.e.date.split('-');
+    toast(merged ? (+p[1]) + '월 ' + (+p[2]) + '일 일기 뒤에 이어 붙여 되살렸어요' : (+p[1]) + '월 ' + (+p[2]) + '일 일기를 되살렸어요', '보러 가기', function () { openWrite(x.e.date); });
+  });
   $('#delYes').addEventListener('click', function () {
     clearTimeout(timer); timer = null;
+    var gone = entries[editKey];
+    trashPut(gone);
     delete entries[editKey];
     persist();
     if (typeof markGone === 'function') markGone('e:' + editKey);
     loadDraft(); renderWrite();
-    toast('지웠어요');
+    toast('지웠어요', '되돌리기', function () { if (gone) { restoreEntry(gone); trashSave(trashLoad().filter(function (x) { return !(x.e.date === gone.date && x.e.body === gone.body); })); toast('되살렸어요'); } });
   });
 
   $('#calPrev').addEventListener('click', function () { viewM--; if (viewM < 0) { viewM = 11; viewY--; } renderCal(); renderList(); });
@@ -2346,6 +2469,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     function start(b, target) {
       if (rec) { var same = b === btn; stop(); if (same) return; }
       btn = b; el = target; stopAsked = false; fin = '';
+      if (target.id === 'body' && typeof histSnap === 'function') histSnap(true);
       var s = el.selectionStart == null ? el.value.length : el.selectionStart, e2 = el.selectionEnd == null ? s : el.selectionEnd;
       pre = el.value.slice(0, s); post = el.value.slice(e2);
       if (pre && !/\s$/.test(pre)) pre += ' ';
