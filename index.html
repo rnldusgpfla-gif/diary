@@ -223,6 +223,40 @@ body.typing .datebar{gap:5px}
 /* archive */
 .cal-head{display:flex;align-items:center;gap:6px;min-height:48px;margin-bottom:8px}
 .cal-title{flex:1;min-width:0;font-size:24px;font-weight:400;letter-spacing:-.02em;-webkit-font-smoothing:antialiased}
+.cat{position:relative;flex:none;width:56px;height:48px;margin-right:6px;pointer-events:none}
+.cat > *{position:absolute}
+.cat-jump,.cat-body{left:0;bottom:6px;width:56px;height:56px;transform-origin:50% 100%;z-index:2}
+.cat-body{bottom:0}
+.cat-img{display:block;width:56px;height:56px;object-fit:contain;object-position:50% 100%}
+.cat-shadow{left:50%;bottom:3px;width:40px;height:7px;margin-left:-20px;border-radius:50%;background:radial-gradient(closest-side,rgba(48,40,72,.24),rgba(48,40,72,0));transform-origin:50% 50%;z-index:1}
+.cat[data-state="brown"] .cat-shadow{width:52px;margin-left:-26px}
+.cat[data-state="gold"] .cat-shadow{width:34px;margin-left:-17px;opacity:.8}
+.cat-star{width:9px;height:9px;z-index:1;opacity:0;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+.cat[data-state="gold"] .cat-star{background:#F2C14E;filter:drop-shadow(0 0 2px rgba(242,193,78,.8))}
+.cat[data-state="gold"] .s1{top:-14px;left:2px;width:10px;height:10px;animation:catTwinkle 2.6s ease-in-out infinite}
+.cat[data-state="gold"] .s2{top:-4px;right:-4px;width:7px;height:7px;animation:catTwinkle 3.3s ease-in-out .9s infinite}
+.cat[data-state="silver"] .s1{top:-12px;right:-2px;width:8px;height:8px;background:#C3C6D2;animation:catGlint 6.5s ease-in-out 1.5s infinite}
+.cat[data-state="silver"] .s2,.cat[data-state="brown"] .cat-star{display:none}
+.cat[data-state="gold"] .cat-body{animation:catHop 5s ease-in-out infinite}
+.cat[data-state="gold"] .cat-shadow{animation:catHopShadow 5s ease-in-out infinite}
+.cat[data-state="silver"] .cat-body{animation:catPuff 4s ease-in-out infinite}
+.cat[data-state="brown"] .cat-body{animation:catBreathe 5s ease-in-out infinite}
+.cat.yay .cat-jump{animation:catYay .62s cubic-bezier(.3,.7,.4,1)}
+.cat.yay .cat-shadow{animation:catYayShadow .62s ease-out}
+@keyframes catHop{0%,82%,100%{transform:translateY(0)}88%{transform:translateY(-3px)}94%{transform:translateY(0)}}
+@keyframes catHopShadow{0%,82%,100%{transform:scaleX(1);opacity:.8}88%{transform:scaleX(.86);opacity:.6}94%{transform:scaleX(1);opacity:.8}}
+@keyframes catPuff{0%,74%,100%{transform:scaleY(1)}86%{transform:scaleY(1.02)}}
+@keyframes catBreathe{0%,58%,100%{transform:scale(1,1)}79%{transform:scale(1.006,1.016)}}
+@keyframes catTwinkle{0%,100%{opacity:.2;transform:scale(.65)}50%{opacity:1;transform:scale(1)}}
+@keyframes catGlint{0%,80%,100%{opacity:0;transform:scale(.5)}88%{opacity:1;transform:scale(1)}}
+@keyframes catYay{0%{transform:translateY(0) scale(1,1)}18%{transform:translateY(0) scale(1.05,.94)}48%{transform:translateY(-7px) scale(.97,1.04)}76%{transform:translateY(0) scale(1.03,.97)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes catYayShadow{0%,100%{transform:scaleX(1)}48%{transform:scaleX(.8)}}
+@media (prefers-reduced-motion: reduce){
+  .cat *{animation:none!important}
+  .cat[data-state="gold"] .cat-star{opacity:.9}
+  .cat[data-state="silver"] .s1{opacity:.7}
+}
+.cat-prev{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 10px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0}
 .wd{font-size:12px;color:var(--ink-soft);text-align:center;padding:8px 0 4px}
 .day{position:relative;height:48px;display:flex;justify-content:center;padding-top:4px;font-variant-numeric:tabular-nums}
@@ -473,9 +507,15 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     <div>
       <div class="cal-head">
         <h2 id="calTitle" class="cal-title"></h2>
+        <div class="cat" id="cat" data-state="silver" aria-hidden="true">
+          <span class="cat-shadow"></span>
+          <span class="cat-star s1"></span><span class="cat-star s2"></span>
+          <span class="cat-jump"><span class="cat-body"><img class="cat-img" id="catImg" src="images/cat-silver.png" alt="" width="56" height="56" decoding="async"></span></span>
+        </div>
         <button type="button" class="step" id="calPrev" aria-label="이전 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M14.5 6 8.5 12l6 6"/></svg></button>
         <button type="button" class="step" id="calNext" aria-label="다음 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M9.5 6l6 6-6 6"/></svg></button>
       </div>
+      <div id="catPrev" class="cat-prev" role="group" aria-label="고양이 상태 미리 보기" hidden><span class="cap">미리 보기</span><button type="button" class="chip filter" data-cat="gold">금</button><button type="button" class="chip filter" data-cat="silver">은</button><button type="button" class="chip filter" data-cat="brown">동</button><button type="button" class="chip filter" data-cat="">자동</button><button type="button" class="chip filter" data-cat="yay">저장 반응</button></div>
       <div id="calGrid" class="cal-grid"></div>
     </div>
     <div>
@@ -523,7 +563,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v2.8</p>
+      <p class="about">하루 한 장 · v2.9</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -985,6 +1025,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       return false;
     }
     setState(r === 'ok' ? '저장됨 · ' + clock(now) : '임시 보관 중 · 새로고침하면 사라져요');
+    if (r === 'ok' && typeof catCheer === 'function') catCheer();
     if (typeof scheduleNotion === 'function') scheduleNotion();
     $('#delZone').hidden = false;
     $('#sampleNote').hidden = true;
@@ -1312,6 +1353,32 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     renderSetValues();
   }
 
+  /* ---------- 고양이: 모아보기 달력 위의 친구 (금 · 은 · 동) ---------- */
+  var CAT_SRC = { gold: 'images/cat-gold.png', silver: 'images/cat-silver.png', brown: 'images/cat-brown.png' };
+  var catForced = (String(location.search).match(/[?&]cat=(gold|silver|brown)\b/) || [])[1] || null;
+  var catPending = false;
+  /* the app has no energy rule yet, so the cat stays 은 until one is decided; 개발 미리보기 (#catpreview) switches states */
+  function catEnergy() { return null; }
+  function catState() { return catForced || catEnergy() || 'silver'; }
+  function renderCat() {
+    var c = $('#cat'), s = catState();
+    if (c.getAttribute('data-state') !== s || !$('#catImg').getAttribute('src')) { c.setAttribute('data-state', s); $('#catImg').src = CAT_SRC[s]; }
+    $$('#catPrev [data-cat]').forEach(function (b) { var v = b.getAttribute('data-cat'); if (v !== 'yay') b.setAttribute('aria-pressed', String((catForced || '') === v)); });
+  }
+  function catCheer() {
+    var c = $('#cat');
+    if (!c || $('#v-archive').hidden) { catPending = true; return; }
+    c.classList.remove('yay'); void c.offsetWidth; c.classList.add('yay');
+  }
+  $('#cat').addEventListener('animationend', function (e) { if (e.animationName === 'catYay') $('#cat').classList.remove('yay'); });
+  if (/catpreview/.test(String(location.search) + String(location.hash))) $('#catPrev').hidden = false;
+  $('#catPrev').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-cat]'); if (!b) return;
+    var v = b.getAttribute('data-cat');
+    if (v === 'yay') { catCheer(); return; }
+    catForced = v || null; renderCat();
+  });
+
   /* ---------- tabs ---------- */
   function setTab(name) {
     flush();
@@ -1322,7 +1389,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     });
     if (name === 'write') { loadDraft(); renderWrite(); }
     if (name === 'notes') renderNotes();
-    if (name === 'archive') renderArchive();
+    if (name === 'archive') { renderArchive(); renderCat(); if (catPending) { catPending = false; setTimeout(catCheer, 380); } }
     if (name === 'more') { showSetMain(); renderMore(); }
     window.scrollTo(0, 0);
   }
