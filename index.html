@@ -269,7 +269,29 @@ body.typing .done{display:inline-flex;align-items:center}
 .fill{align-self:stretch}
 .pill{display:inline-flex;align-items:center;font-size:12px;font-weight:500;background:var(--paper-2);color:var(--ink-soft);border-radius:999px;padding:2px 10px}
 .about{font-size:12px;color:var(--ink-soft);text-align:center}
-.view > .credit{font-size:11px;line-height:1.6;color:var(--ink-soft);text-align:center;padding:0 8px;margin-top:-16px}
+/* settings list */
+.smain,.spage{display:flex;flex-direction:column;gap:24px}
+.spage{gap:16px}
+.sgrp{display:flex;flex-direction:column;gap:8px}
+.sgh{font-size:13px;font-weight:600;color:var(--ink-soft);padding:0 4px}
+.sgf{font-size:12px;color:var(--ink-soft);padding:0 4px;line-height:1.5}
+.slist{border-radius:14px;background:var(--surface);overflow:hidden;display:flex;flex-direction:column}
+.srow{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 12px 8px 14px;width:100%;text-align:left;position:relative;cursor:pointer}
+.srow + .srow::before{content:"";position:absolute;top:0;left:58px;right:0;height:1px;background:color-mix(in srgb,var(--ink) 7%,transparent)}
+.srow:active{background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.sic{flex:none;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--on-a)}
+.sic.t-blue{background:var(--a-blue)}.sic.t-green{background:var(--a-green)}.sic.t-yellow{background:var(--a-yellow)}
+.sic svg{width:18px;height:18px}
+.sk{flex:1;min-width:0;font-size:16px;font-weight:500}
+.sv{flex:none;max-width:45%;font-size:15px;color:var(--ink-soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chev{flex:none;width:18px;height:18px;color:var(--ink-soft);opacity:.7}
+.ssel{flex:none;display:flex;align-items:center;gap:2px;max-width:55%}
+.ssel select{-webkit-appearance:none;appearance:none;border:0;background:transparent;color:var(--ink-soft);font:inherit;font-size:16px;text-align:right;text-align-last:right;padding:6px 0;max-width:100%;cursor:pointer}
+.ssel select:focus{outline:none}
+.sp-h{display:flex;align-items:center;margin:-6px 0 -12px -8px}
+.sp-back{display:inline-flex;align-items:center;gap:2px;min-height:44px;padding:0 10px 0 4px;font-size:16px;color:var(--ink-soft)}
+.sp-back svg{width:22px;height:22px}
+.smain > .credit{font-size:11px;line-height:1.6;color:var(--ink-soft);text-align:center;padding:0 8px;margin-top:-16px}
 #pushTime{display:block;min-width:0;max-width:100%;text-align:left}
 #pushTime::-webkit-date-and-time-value{text-align:left}
 .push-msg{align-self:stretch;margin:0;padding:10px 12px;border-radius:10px;background:var(--a-yellow);color:var(--on-a);font-size:13px;line-height:1.5}
@@ -451,49 +473,45 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
   <!-- 설정 -->
   <section id="v-more" class="view" aria-labelledby="moreH" hidden>
-    <h1 id="moreH" class="page-t">설정</h1>
+    <div class="smain" id="setMain">
+      <h1 id="moreH" class="page-t">설정</h1>
 
-    <div class="card">
-      <h2>처음 화면</h2>
-      <p>앱을 열면 가장 먼저 보이는 화면이에요.</p>
-      <div id="startList" class="chips fill" role="group" aria-label="처음 화면"></div>
-    </div>
-
-    <div class="card t-blue">
-      <div class="card-h"><h2>노션</h2><span class="pill" id="notionPill">연결 안 됨</span></div>
-      <p>저장한 일기가 노션 '💻 다이어리' 표의 같은 날짜 줄에 자동으로 들어가요. 본문은 그 날 페이지에, 첫 줄과 태그는 summary·태그 칸에 담겨요.</p>
-      <p id="pending" class="cap"></p>
-      <button type="button" class="btn" id="notionBtn" hidden>지금 보내기</button>
-      <button type="button" class="btn" id="nForce" hidden></button>
-      <p class="cap" id="notionMsg"></p>
-      <details class="n-set">
-        <summary>연결 설정</summary>
-        <div class="n-body">
-        <label class="cap" for="nUrl">중계 서버 주소</label>
-        <input id="nUrl" class="input" type="url" spellcheck="false" autocomplete="off" placeholder="https://….workers.dev">
-        <label class="cap" for="nKey">연결 키</label>
-        <input id="nKey" class="input" type="password" spellcheck="false" autocomplete="off" placeholder="중계 서버에 넣은 DIARY_KEY">
-        <button type="button" class="btn" id="nSave">저장하고 연결하기</button>
+      <div class="sgrp">
+        <p class="sgh">쓰기 화면</p>
+        <div class="slist">
+        <label class="srow"><span class="sic t-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg></span><span class="sk">처음 화면</span><span class="ssel"><select id="startSel" aria-label="처음 화면"><option value="write">쓰기</option><option value="notes">끄적</option><option value="archive">모아보기</option></select><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M8 10l4-4 4 4M8 14l4 4 4-4"/></svg></span></label>
+        <button type="button" class="srow" data-page="font"><span class="sic t-yellow"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M5 19L10.5 5h1L17 19M7.4 13.5h7.2"/></svg></span><span class="sk">글씨</span><span class="sv" id="svFont"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        <button type="button" class="srow" data-page="paper"><span class="sic t-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M7 3.5h7l4 4V20a.5.5 0 0 1-.5.5h-10A.5.5 0 0 1 7 20zM14 3.5V8h4"/></svg></span><span class="sk">종이</span><span class="sv" id="svPaper"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        <label class="srow"><span class="sic t-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M4 9.5h3l4-3.5v12l-4-3.5H4zM15 9a4 4 0 0 1 0 6M17.5 6.5a7.5 7.5 0 0 1 0 11"/></svg></span><span class="sk">쓸 때 소리</span><span class="ssel"><select id="sndSel" aria-label="쓸 때 소리"></select><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M8 10l4-4 4 4M8 14l4 4 4-4"/></svg></span></label>
+        <button type="button" class="srow" data-page="tags"><span class="sic t-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M4 4h7l9 9-7 7-9-9zM8 8h.01"/></svg></span><span class="sk">자주 쓰는 태그</span><span class="sv" id="svTags"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
         </div>
-      </details>
-    </div>
-
-    <div class="card" id="pushCard">
-      <div class="card-h"><h2>밤 알림</h2><button type="button" class="toggle" id="pushT" role="switch" aria-checked="false" aria-label="밤 알림"><span></span></button></div>
-      <p>정한 시간에 일기 쓸 시간이라고 알려 드려요. 아이폰은 홈 화면에 추가한 앱에서만 받을 수 있어요.</p>
-      <p class="push-msg" id="pushMsg" role="status" hidden></p>
-      <div class="n-body" id="pushSet" hidden>
-        <label class="label" for="pushTime">시간</label>
-        <input id="pushTime" class="input" type="time" value="22:00">
-        <label class="label" for="pushBody">알림 문구</label>
-        <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" value="오늘 하루, 어땠어요?">
-        <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
-        <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
+        <p class="sgf">쓸 때 소리는 아이폰 무음 모드에서는 안 들려요.</p>
       </div>
+
+      <div class="sgrp">
+        <p class="sgh">연결</p>
+        <div class="slist">
+        <button type="button" class="srow" data-page="notion"><span class="sic t-yellow"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M5 4h10l4 4v12H5zM9 9v7M9 9l6 7M15 9v7"/></svg></span><span class="sk">노션</span><span class="sv" id="svNotion"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        <button type="button" class="srow" data-page="push"><span class="sic t-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5h4"/></svg></span><span class="sk">밤 알림</span><span class="sv" id="svPush"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <div class="sgrp">
+        <p class="sgh">보호와 보관</p>
+        <div class="slist">
+        <button type="button" class="srow" data-page="lock"><span class="sic t-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M6 11h12v9H6zM8.5 11V8a3.5 3.5 0 0 1 7 0v3"/></svg></span><span class="sk">비밀번호 잠금</span><span class="sv" id="svLock"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        <button type="button" class="srow" data-page="backup"><span class="sic t-green"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M12 4v11M7.5 10.5L12 15l4.5-4.5M5 19h14"/></svg></span><span class="sk">백업과 저장 공간</span><span class="sv" id="svBk"></span><svg class="chev" viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M9 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+
+      <p class="about">하루 한 장 · v2.3</p>
+      <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
     </div>
 
+    <div class="spage" id="sp-font" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">글씨</h1>
     <div class="card">
-      <h2>글씨</h2>
       <div class="pv" id="pv">
         <div class="pv-b" id="pvBody">한 정거장 먼저 내려서 걸었다. 걷는 동안 아무 생각도 하지 않았다.</div>
       </div>
@@ -517,13 +535,13 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <div class="slide-h"><label for="lhR">줄 간격</label><output id="lhO" for="lhR"></output></div>
         <input id="lhR" type="range" min="14" max="26" step="1">
       </div>
-      <p class="label sw-row">쓸 때 소리</p>
-      <div id="sndList" class="chips fill" role="group" aria-label="쓸 때 소리"></div>
-      <p class="cap">누르면 미리 들려줘요. 아이폰 무음 모드에서는 안 들려요.</p>
+    </div>
     </div>
 
+    <div class="spage" id="sp-paper" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">종이</h1>
     <div class="card">
-      <h2>종이</h2>
       <p class="label">종이 색</p>
       <div id="paperList" class="swatches" role="group" aria-label="종이 색"></div>
 
@@ -536,9 +554,12 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
       <button type="button" class="btn" id="resetLook">기본값으로 되돌리기</button>
     </div>
+    </div>
 
+    <div class="spage" id="sp-tags" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">자주 쓰는 태그</h1>
     <div class="card">
-      <h2>자주 쓰는 태그</h2>
       <p>쓰기 화면 아래에 나와서 눌러서 바로 붙일 수 있어요.</p>
       <div class="tagrow">
         <div id="favList" class="chips"></div>
@@ -548,9 +569,53 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </form>
       </div>
     </div>
+    </div>
 
+    <div class="spage" id="sp-notion" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">노션</h1>
+    <div class="card t-blue">
+      <div class="card-h"><p class="label" style="margin:0">연결 상태</p><span class="pill" id="notionPill">연결 안 됨</span></div>
+      <p>저장한 일기가 노션 '💻 다이어리' 표의 같은 날짜 줄에 자동으로 들어가요. 본문은 그 날 페이지에, 첫 줄과 태그는 summary·태그 칸에 담겨요.</p>
+      <p id="pending" class="cap"></p>
+      <button type="button" class="btn" id="notionBtn" hidden>지금 보내기</button>
+      <button type="button" class="btn" id="nForce" hidden></button>
+      <p class="cap" id="notionMsg"></p>
+      <details class="n-set">
+        <summary>연결 설정</summary>
+        <div class="n-body">
+        <label class="cap" for="nUrl">중계 서버 주소</label>
+        <input id="nUrl" class="input" type="url" spellcheck="false" autocomplete="off" placeholder="https://….workers.dev">
+        <label class="cap" for="nKey">연결 키</label>
+        <input id="nKey" class="input" type="password" spellcheck="false" autocomplete="off" placeholder="중계 서버에 넣은 DIARY_KEY">
+        <button type="button" class="btn" id="nSave">저장하고 연결하기</button>
+        </div>
+      </details>
+    </div>
+    </div>
+
+    <div class="spage" id="sp-push" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">밤 알림</h1>
+    <div class="card" id="pushCard">
+      <div class="card-h"><p class="label" style="margin:0">알림 받기</p><button type="button" class="toggle" id="pushT" role="switch" aria-checked="false" aria-label="밤 알림"><span></span></button></div>
+      <p>정한 시간에 일기 쓸 시간이라고 알려 드려요. 아이폰은 홈 화면에 추가한 앱에서만 받을 수 있어요.</p>
+      <p class="push-msg" id="pushMsg" role="status" hidden></p>
+      <div class="n-body" id="pushSet" hidden>
+        <label class="label" for="pushTime">시간</label>
+        <input id="pushTime" class="input" type="time" value="22:00">
+        <label class="label" for="pushBody">알림 문구</label>
+        <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" value="오늘 하루, 어땠어요?">
+        <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
+        <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
+      </div>
+    </div>
+    </div>
+
+    <div class="spage" id="sp-lock" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">비밀번호 잠금</h1>
     <div class="card t-green">
-      <h2>비밀번호 잠금</h2>
       <p id="lockInfo"></p>
       <div id="awayWrap" class="fill" hidden>
         <p class="cap" style="margin-bottom:8px">앱을 나갔다 돌아오면</p>
@@ -561,7 +626,11 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <button type="button" class="btn" id="lockOff" hidden>잠금 끄기</button>
       <p class="cap">화면을 가려주는 잠금이에요. 일기 파일 자체를 암호화하진 않아요.</p>
     </div>
+    </div>
 
+    <div class="spage" id="sp-backup" hidden>
+      <div class="sp-h"><button type="button" class="sp-back" aria-label="설정으로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path class="ti" d="M15 6l-6 6 6 6"/></svg><span>설정</span></button></div>
+      <h1 class="page-t">백업과 저장 공간</h1>
     <div class="card t-yellow">
       <h2>저장 공간</h2>
       <p id="storeLine"></p>
@@ -581,8 +650,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
       <p class="cap">가져오면 같은 날짜는 더 최근에 고친 쪽이 남아요.</p>
     </div>
-    <p class="about">하루 한 장 · v2.2</p>
-    <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
+    </div>
+
   </section>
 </main>
 
@@ -1227,8 +1296,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#clearSamples').hidden = !samples;
     renderLook();
     renderFav();
-    renderSnd(); renderStart();
     renderLockCard();
+    renderSetValues();
   }
 
   /* ---------- tabs ---------- */
@@ -1242,7 +1311,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (name === 'write') { loadDraft(); renderWrite(); }
     if (name === 'notes') renderNotes();
     if (name === 'archive') renderArchive();
-    if (name === 'more') renderMore();
+    if (name === 'more') { showSetMain(); renderMore(); }
     window.scrollTo(0, 0);
   }
   function openWrite(key) { flush(); editKey = key; setTab('write'); }
@@ -1441,33 +1510,77 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   }
   ['touchend', 'click', 'keydown'].forEach(function (ev) { document.addEventListener(ev, twUnlock, true); });
   var START_TABS = [['write', '쓰기'], ['notes', '끄적'], ['archive', '모아보기']];
-  function renderStart() {
-    var cur = prefs.start || 'write';
-    $('#startList').innerHTML = START_TABS.map(function (s) {
-      return '<button type="button" class="chip filter" data-start="' + s[0] + '" aria-pressed="' + (cur === s[0]) + '">' + s[1] + '</button>';
-    }).join('');
-  }
-  $('#startList').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-start]');
-    if (!b) return;
-    prefs.start = b.getAttribute('data-start');
-    savePrefs(); renderStart();
-    toast('다음에 열면 ' + b.textContent + ' 화면부터 보여요');
+  function renderStart() { $('#startSel').value = prefs.start || 'write'; }
+  $('#startSel').addEventListener('change', function (e) {
+    prefs.start = e.target.value;
+    savePrefs();
+    toast('다음에 열면 ' + e.target.options[e.target.selectedIndex].text + ' 화면부터 보여요');
   });
   function renderSnd() {
-    $('#sndList').innerHTML = SOUNDS.map(function (s) {
-      return '<button type="button" class="chip filter" data-snd="' + s[0] + '" aria-pressed="' + ((prefs.typeSound || '') === s[0]) + '">' + s[1] + '</button>';
-    }).join('');
+    var sel = $('#sndSel');
+    if (!sel.options.length) sel.innerHTML = SOUNDS.map(function (s) { return '<option value="' + s[0] + '">' + s[1] + '</option>'; }).join('');
+    sel.value = prefs.typeSound || '';
   }
-  $('#sndList').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-snd]');
-    if (!b) return;
-    var s = b.getAttribute('data-snd');
+  $('#sndSel').addEventListener('change', function (e) {
+    var s = e.target.value;
     prefs.typeSound = s || false;
-    savePrefs(); renderSnd();
+    savePrefs();
     if (s) { twCtx(); [0, 130, 250, 380].forEach(function (ms, i) { setTimeout(function () { typeSound(i === 2 ? 'space' : i === 3 ? 'enter' : 'key', s); }, 30 + ms); }); }
   });
   renderSnd();
+
+  /* ---------- settings: a short list on top, each item opens its own page ---------- */
+  var setPage = null;
+  function showSetMain() {
+    setPage = null;
+    $('#setMain').hidden = false;
+    $$('.spage').forEach(function (p) { p.hidden = true; });
+  }
+  function openSet(name) {
+    var pg = $('#sp-' + name);
+    if (!pg) return;
+    setPage = name;
+    $('#setMain').hidden = true;
+    $$('.spage').forEach(function (p) { p.hidden = p !== pg; });
+    window.scrollTo(0, 0);
+  }
+  function closeSet() {
+    var was = setPage;
+    showSetMain(); renderSetValues();
+    var row = was && $('.srow[data-page="' + was + '"]');
+    if (row) { row.scrollIntoView({ block: 'center' }); try { row.focus({ preventScroll: true }); } catch (e) {} }
+  }
+  function renderSetValues() {
+    var f = FONTS[prefs.font];
+    $('#svFont').textContent = (f ? f.label : '') + ' · ' + prefs.size;
+    $('#svPaper').textContent = prefs.sx && prefs.sx !== 'none' ? '편지지' : (PAPERS[prefs.paper] ? PAPERS[prefs.paper].label : '');
+    var ft = (prefs.favTags || []).length;
+    $('#svTags').textContent = ft ? ft + '개' : '없음';
+    $('#svNotion').textContent = $('#notionPill').textContent;
+    $('#svLock').textContent = lock.enabled ? '켜짐' : '꺼짐';
+    $('#svBk').textContent = '일기 ' + Object.keys(entries).filter(function (k) { return !entries[k].sample; }).length + '편';
+    renderStart(); renderSnd();
+  }
+  $('#v-more').addEventListener('click', function (e) {
+    var row = e.target.closest('[data-page]');
+    if (row) { openSet(row.getAttribute('data-page')); return; }
+    if (e.target.closest('.sp-back')) closeSet();
+  });
+  /* swipe from the left edge goes back, like other iPhone apps */
+  (function () {
+    var sx = null, sy = 0;
+    $('#v-more').addEventListener('touchstart', function (e) {
+      var t = e.touches[0];
+      sx = (setPage && t.clientX < 40) ? t.clientX : null; sy = t.clientY;
+    }, { passive: true });
+    $('#v-more').addEventListener('touchend', function (e) {
+      if (sx === null) return;
+      var t = e.changedTouches[0];
+      if (t.clientX - sx > 70 && Math.abs(t.clientY - sy) < 60) closeSet();
+      sx = null;
+    }, { passive: true });
+  })();
+  if (window.MutationObserver) new MutationObserver(function () { $('#svNotion').textContent = $('#notionPill').textContent; }).observe($('#notionPill'), { childList: true, characterData: true, subtree: true });
 
   /* ---------- lock ---------- */
   var lock = { enabled: false, hash: '', salt: '', away: 60 };
@@ -2218,6 +2331,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#pushSkip').setAttribute('aria-checked', String(!!pCfg.skip));
     $('#pushTime').value = pCfg.time; $('#pushBody').value = pCfg.body;
     $('#pushSet').hidden = !pCfg.on;
+    var sv = $('#svPush'); if (sv) sv.textContent = pCfg.on ? pCfg.time : '꺼짐';
   }
   function b64ToU8(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   function pushSettings() { return { time: pCfg.time, tz: TZ, body: pCfg.body, title: '하루 한 장', skipIfWritten: !!pCfg.skip }; }
@@ -2254,6 +2368,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   var pushTimer = null;
   function pushChanged() {
     savePush();
+    var sv = $('#svPush'); if (sv) sv.textContent = pCfg.on ? pCfg.time : '꺼짐';
     if (!pCfg.on) return;
     clearTimeout(pushTimer);
     pushTimer = setTimeout(function () {
