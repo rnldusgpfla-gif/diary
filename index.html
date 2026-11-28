@@ -400,9 +400,9 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
     <div class="sheet">
       <label class="vh" for="title" hidden>제목</label>
-      <input id="title" class="title" hidden type="text" spellcheck="false" placeholder="제목" autocomplete="off" maxlength="80">
+      <input id="title" class="title" hidden type="text" spellcheck="false" placeholder="제목" autocomplete="off" aria-autocomplete="none" data-form-type="other" maxlength="80">
       <label class="vh" for="body">본문</label>
-      <textarea id="body" class="paper" spellcheck="false" placeholder="오늘 하루를 돌아보며.." rows="9"></textarea>
+      <textarea id="body" class="paper" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" placeholder="오늘 하루를 돌아보며.." rows="9"></textarea>
       <p id="saveState" class="state" aria-live="polite"></p>
     </div>
 
@@ -416,7 +416,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <div id="tagList" class="chips"></div>
         <form id="tagForm" class="tagform" autocomplete="off">
           <label class="vh" for="tagInput">태그 입력</label>
-          <input id="tagInput" class="tag-in" type="text" spellcheck="false" placeholder="+ 태그" maxlength="16" enterkeyhint="done">
+          <input id="tagInput" class="tag-in" type="text" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" placeholder="+ 태그" maxlength="16" enterkeyhint="done">
         </form>
       </div>
       <div id="tagSuggestWrap" hidden>
@@ -440,7 +440,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     <h1 id="notesH" class="page-t">끄적</h1>
     <form id="noteForm" class="note-new" autocomplete="off">
       <label class="vh" for="noteInput">새로 끄적이기</label>
-      <textarea id="noteInput" class="note-in" rows="2" spellcheck="false" placeholder="떠오른 생각을 그냥 적어 두세요"></textarea>
+      <textarea id="noteInput" class="note-in" rows="2" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" placeholder="떠오른 생각을 그냥 적어 두세요"></textarea>
       <div class="note-bar">
         <span class="cap">남기면 지금 시각이 같이 적혀요</span>
         <span class="note-acts2"><button type="button" class="step mic" id="micNote" aria-label="말로 받아쓰기" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M12 3.5a2.8 2.8 0 0 1 2.8 2.8v5.4a2.8 2.8 0 0 1-5.6 0V6.3A2.8 2.8 0 0 1 12 3.5zM6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v3.5"/></svg></button>
@@ -464,7 +464,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     </div>
     <div>
       <label class="vh" for="q">일기 검색</label>
-      <input id="q" class="input" style="width:100%" type="search" spellcheck="false" placeholder="내용, 태그 검색" autocomplete="off">
+      <input id="q" class="input" style="width:100%" type="search" spellcheck="false" placeholder="내용, 태그 검색" autocomplete="off" aria-autocomplete="none" data-form-type="other">
     </div>
     <div id="filters" class="filters" role="group" aria-label="태그로 거르기"></div>
     <button type="button" class="fab" id="fabWrite" aria-label="오늘 일기 쓰기"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path class="ti" d="M12 5v14M5 12h14"/></svg></button>
@@ -507,7 +507,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v2.4</p>
+      <p class="about">하루 한 장 · v2.5</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -562,7 +562,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <div id="favList" class="chips"></div>
         <form id="favForm" class="tagform" autocomplete="off">
           <label class="vh" for="favInput">자주 쓰는 태그 더하기</label>
-          <input id="favInput" class="tag-in" type="text" spellcheck="false" placeholder="+ 태그" maxlength="16" enterkeyhint="done">
+          <input id="favInput" class="tag-in" type="text" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" placeholder="+ 태그" maxlength="16" enterkeyhint="done">
         </form>
       </div>
     </div>
@@ -602,7 +602,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <label class="label" for="pushTime">시간</label>
         <input id="pushTime" class="input" type="time" value="22:00">
         <label class="label" for="pushBody">알림 문구</label>
-        <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" value="오늘 하루, 어땠어요?">
+        <input id="pushBody" class="input" type="text" maxlength="80" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" value="오늘 하루, 어땠어요?">
         <div class="lab-row"><p class="label" style="margin:0">이미 쓴 날은 보내지 않기</p><button type="button" class="toggle" id="pushSkip" role="switch" aria-checked="true" aria-label="이미 썼으면 보내지 않기"><span></span></button></div>
         <button type="button" class="btn" id="pushTest">알림 시험해 보기</button>
       </div>
@@ -641,7 +641,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <button type="button" class="btn" id="bkCopy">일기 전체 복사하기</button>
       <button type="button" class="btn" id="bkSave" hidden>파일로 저장하기</button>
       <label class="vh" for="bkText">복사한 백업 붙여넣기</label>
-      <textarea id="bkText" class="bk-text" rows="3" spellcheck="false" placeholder="복사한 백업을 여기에 붙여넣기"></textarea>
+      <textarea id="bkText" class="bk-text" rows="3" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other" placeholder="복사한 백업을 여기에 붙여넣기"></textarea>
       <button type="button" class="btn" id="bkImport">붙여넣은 일기 가져오기</button>
       <button type="button" class="btn" id="bkOpen" hidden>파일에서 가져오기</button>
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
@@ -1260,7 +1260,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#noteFeed').innerHTML = list.map(function (n) {
       if (noteEdit === n.id) {
         return '<article class="note" data-id="' + n.id + '"><label class="vh" for="noteEditIn">끄적 고치기</label>' +
-          '<textarea id="noteEditIn" class="note-in" spellcheck="false">' + esc(n.text) + '</textarea>' +
+          '<textarea id="noteEditIn" class="note-in" spellcheck="false" autocomplete="off" aria-autocomplete="none" data-form-type="other">' + esc(n.text) + '</textarea>' +
           '<div class="note-acts"><button type="button" class="del" data-act="del">' + (noteDel === n.id ? '정말 지울까요?' : '지우기') + '</button><span class="sp"></span>' +
           '<button type="button" data-act="cancel">취소</button><button type="button" class="ok" data-act="save">저장</button></div>' +
           '<div class="note-f">' + noteStamp(n.createdAt) + '</div></article>';
