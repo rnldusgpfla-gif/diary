@@ -522,7 +522,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v2.6</p>
+      <p class="about">하루 한 장 · v2.7</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -1004,10 +1004,28 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     var h = Math.round(vh - menu - 30 - 28 - top);
     sheet.style.minHeight = Math.max(h, 320) + 'px';
   }
+  /* grow a text box to fit its text without the page jumping: while it is measured, the box around it
+     keeps its height, so the page never gets shorter and the scroll position never resets */
+  function growBox(el, min, holder) {
+    var y = window.pageYOffset, keep = holder.style.minHeight;
+    holder.style.minHeight = holder.offsetHeight + 'px';
+    el.style.height = 'auto';
+    el.style.height = Math.max(el.scrollHeight, min || 0) + 'px';
+    holder.style.minHeight = keep;
+    if (window.pageYOffset !== y) window.scrollTo(0, y);
+  }
+  /* when writing at the end, keep the new line above the keyboard */
+  function keepCaretInView(el) {
+    if (document.activeElement !== el || el.selectionEnd !== el.value.length) return;
+    var vv = window.visualViewport, bottom = vv ? vv.offsetTop + vv.height : window.innerHeight;
+    var r = el.getBoundingClientRect(), lh = parseFloat(getComputedStyle(el).lineHeight) || 30;
+    var over = r.bottom + lh * 0.5 - bottom;
+    if (over > 0) window.scrollBy(0, over);
+  }
   function autosize() {
     var b = $('#body');
-    b.style.height = 'auto';
-    b.style.height = Math.max(b.scrollHeight, MIN_H) + 'px';
+    growBox(b, MIN_H, b.parentNode);
+    keepCaretInView(b);
   }
   function resetDelete() { $('#delAsk').hidden = false; $('#delConfirm').hidden = true; }
 
@@ -1321,7 +1339,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     var d = new Date(ms), now = new Date();
     return (d.getFullYear() !== now.getFullYear() ? d.getFullYear() + '년 ' : '') + (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + WD[d.getDay()] + '요일 · ' + clock(ms);
   }
-  function autoNote(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+  function autoNote(el) { growBox(el, 0, el.parentNode); keepCaretInView(el); }
   function renderNotes() {
     var list = notes.filter(function (n) { return !n.deleted; }).sort(function (a, b) { return b.createdAt - a.createdAt; });
     $('#noteEmpty').hidden = list.length > 0;
