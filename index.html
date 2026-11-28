@@ -256,6 +256,32 @@ body.typing .datebar{gap:5px}
   .cat[data-state="gold"] .cat-star{opacity:.9}
   .cat[data-state="silver"] .s1{opacity:.7}
 }
+.cat[data-state="none"] .cat-jump,.cat[data-state="none"] .cat-star{visibility:hidden}
+.cat[data-state="none"] .cat-shadow{opacity:.35;width:30px;margin-left:-15px;animation:none}
+.catpop{position:fixed;inset:0;z-index:40;display:grid;place-items:center;padding:24px;background:color-mix(in srgb,var(--paper) 72%,transparent);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:cpFade 2.3s ease forwards;cursor:pointer}
+.catpop-in{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+.cp-stage{position:relative;width:132px;height:132px;margin-bottom:6px}
+.cp-stage > *{position:absolute}
+.cp-img{left:0;bottom:0;width:132px;height:132px;object-fit:contain;object-position:50% 100%;transform-origin:50% 100%;animation:cpPop .62s cubic-bezier(.34,1.56,.64,1) both}
+.cp-shadow{left:50%;bottom:-6px;width:96px;height:14px;margin-left:-48px;border-radius:50%;background:radial-gradient(closest-side,rgba(48,40,72,.26),rgba(48,40,72,0));animation:cpShadow .62s ease-out both}
+.cp-star{width:16px;height:16px;opacity:0;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%);background:#F2C14E;animation:cpStar .9s ease-out both}
+.catpop[data-state="silver"] .cp-star{background:#C3C6D2}
+.catpop[data-state="brown"] .cp-star{background:#D9A57A}
+.cp-star.a{top:4px;left:-10px;animation-delay:.25s}
+.cp-star.b{top:-14px;right:4px;width:12px;height:12px;animation-delay:.35s}
+.cp-star.c{top:46px;right:-18px;width:10px;height:10px;animation-delay:.45s}
+.cp-star.d{top:58px;left:-20px;width:9px;height:9px;animation-delay:.52s}
+.cp-t{font-size:20px;font-weight:600;letter-spacing:-.01em;color:var(--ink);animation:cpText .5s ease-out .25s both}
+.cp-s{font-size:14px;color:var(--ink-soft);animation:cpText .5s ease-out .35s both}
+@keyframes cpFade{0%{opacity:0}9%{opacity:1}84%{opacity:1}100%{opacity:0;visibility:hidden}}
+@keyframes cpPop{0%{opacity:0;transform:translateY(24px) scale(.4)}60%{opacity:1;transform:translateY(-6px) scale(1.07,.97)}80%{transform:translateY(0) scale(.97,1.03)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes cpShadow{0%{opacity:0;transform:scaleX(.3)}100%{opacity:1;transform:scaleX(1)}}
+@keyframes cpStar{0%{opacity:0;transform:scale(.2) rotate(-30deg)}45%{opacity:1;transform:scale(1.15) rotate(0)}100%{opacity:.85;transform:scale(1)}}
+@keyframes cpText{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  .cp-img,.cp-shadow,.cp-t,.cp-s{animation:none}
+  .cp-star{animation:none;opacity:.85}
+}
 .cat-prev{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:-2px 0 10px}
 .cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:0}
 .wd{font-size:12px;color:var(--ink-soft);text-align:center;padding:8px 0 4px}
@@ -515,7 +541,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <button type="button" class="step" id="calPrev" aria-label="이전 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M14.5 6 8.5 12l6 6"/></svg></button>
         <button type="button" class="step" id="calNext" aria-label="다음 달"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M9.5 6l6 6-6 6"/></svg></button>
       </div>
-      <div id="catPrev" class="cat-prev" role="group" aria-label="고양이 상태 미리 보기" hidden><span class="cap">미리 보기</span><button type="button" class="chip filter" data-cat="gold">금</button><button type="button" class="chip filter" data-cat="silver">은</button><button type="button" class="chip filter" data-cat="brown">동</button><button type="button" class="chip filter" data-cat="">자동</button><button type="button" class="chip filter" data-cat="yay">저장 반응</button></div>
+      <div id="catPrev" class="cat-prev" role="group" aria-label="고양이 상태 미리 보기" hidden><span class="cap">미리 보기</span><button type="button" class="chip filter" data-cat="gold">금</button><button type="button" class="chip filter" data-cat="silver">은</button><button type="button" class="chip filter" data-cat="brown">동</button><button type="button" class="chip filter" data-cat="none">사라짐</button><button type="button" class="chip filter" data-cat="">자동</button><button type="button" class="chip filter" data-cat="yay">저장 반응</button><button type="button" class="chip filter" data-cat="pop">짜잔</button></div>
       <div id="calGrid" class="cal-grid"></div>
     </div>
     <div>
@@ -563,7 +589,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v3.0</p>
+      <p class="about">하루 한 장 · v3.1</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
       <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
@@ -725,6 +751,17 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 </nav>
 
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<div id="catPop" class="catpop" role="status" aria-live="polite" hidden>
+  <div class="catpop-in">
+    <div class="cp-stage" id="cpStage">
+      <span class="cp-shadow"></span>
+      <span class="cp-star a"></span><span class="cp-star b"></span><span class="cp-star c"></span><span class="cp-star d"></span>
+      <img class="cp-img" id="cpImg" alt="" width="132" height="132">
+    </div>
+    <p class="cp-t" id="cpT"></p>
+    <p class="cp-s" id="cpS"></p>
+  </div>
+</div>
 <div id="lb" class="lb" hidden>
   <button type="button" class="lb-close" id="lbClose">닫기</button>
   <img id="lbImg" alt="">
@@ -1025,7 +1062,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       return false;
     }
     setState(r === 'ok' ? '저장됨 · ' + clock(now) : '임시 보관 중 · 새로고침하면 사라져요');
-    if (r === 'ok' && typeof catCheer === 'function') catCheer();
+    if (r === 'ok' && typeof catCheer === 'function') { catCheer(); if (!$('#v-write').hidden) catSaved = true; }
     if (typeof scheduleNotion === 'function') scheduleNotion();
     $('#delZone').hidden = false;
     $('#sampleNote').hidden = true;
@@ -1348,12 +1385,19 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   var CAT_SRC = { gold: 'images/cat-gold.png', silver: 'images/cat-silver.png', brown: 'images/cat-brown.png' };
   var catForced = (String(location.search).match(/[?&]cat=(gold|silver|brown)\b/) || [])[1] || null;
   var catPending = false;
-  /* the app has no energy rule yet, so the cat stays 은 until one is decided; 개발 미리보기 (#catpreview) switches states */
-  function catEnergy() { return null; }
-  function catState() { return catForced || catEnergy() || 'silver'; }
+  /* energy rule: days written in a row (filling a missed day later counts too), ending today or — until today is over — yesterday.
+     3+ → 금, 2 → 은, 1 → 동. Nothing in the last 3 days → the cat has wandered off (empty spot). */
+  function catEnergy() {
+    var s = streakInfo();
+    if (s.n >= 3) return 'gold';
+    if (s.n === 2) return 'silver';
+    if (s.n === 1) return 'brown';
+    return hasEntry(shift(todayKey(), -2)) ? 'brown' : 'none';
+  }
+  function catState() { return catForced || catEnergy(); }
   function renderCat() {
     var c = $('#cat'), s = catState();
-    if (c.getAttribute('data-state') !== s || !$('#catImg').getAttribute('src')) { c.setAttribute('data-state', s); $('#catImg').src = CAT_SRC[s]; }
+    if (c.getAttribute('data-state') !== s) { c.setAttribute('data-state', s); if (CAT_SRC[s]) $('#catImg').src = CAT_SRC[s]; }
     $$('#catPrev [data-cat]').forEach(function (b) { var v = b.getAttribute('data-cat'); if (v !== 'yay') b.setAttribute('aria-pressed', String((catForced || '') === v)); });
   }
   function catCheer() {
@@ -1362,11 +1406,45 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     c.classList.remove('yay'); void c.offsetWidth; c.classList.add('yay');
   }
   $('#cat').addEventListener('animationend', function (e) { if (e.animationName === 'catYay') $('#cat').classList.remove('yay'); });
+  /* 짜잔: when a writing session that saved something ends, the cat pops up for a moment with its (new) state */
+  var CAT_KEY = 'hharu.cat.v1', catSaved = false, catBefore = null, catLast = { s: null, at: 0 };
+  try { catLast = JSON.parse(localStorage.getItem(CAT_KEY) || 'null') || catLast; } catch (e) {}
+  var CAT_NAME = { gold: '금', silver: '은', brown: '동' };
+  function catPopShow(s, prev) {
+    var pop = $('#catPop'), n = streakInfo().n;
+    pop.setAttribute('data-state', s);
+    $('#cpImg').src = CAT_SRC[s];
+    var up = prev && prev !== s && prev !== 'none';
+    $('#cpT').textContent = up ? CAT_NAME[prev] + ' → ' + CAT_NAME[s] + ' 고양이가 됐어요!' : CAT_NAME[s] + ' 고양이';
+    $('#cpS').textContent = s === 'gold' ? (n >= 3 ? n + '일 연속으로 썼어요' : '꾸준히 쓰고 있어요')
+      : s === 'silver' ? '2일 연속이에요. 하루 더 쓰면 금!'
+      : (prev === 'none' ? '돌아왔어요! 내일도 쓰면 은' : '한 장 썼어요. 내일도 쓰면 은!');
+    pop.hidden = true; void pop.offsetWidth; pop.hidden = false;      /* restart the motion */
+    clearTimeout(catPopShow.t);
+    catPopShow.t = setTimeout(function () { pop.hidden = true; }, 2300);
+  }
+  $('#catPop').addEventListener('click', function () { $('#catPop').hidden = true; });
+  function catSessionEnd() {
+    flush();
+    if (!catSaved) return;
+    catSaved = false;
+    var s = catEnergy(), now = Date.now(), prev = catBefore;
+    catBefore = null;
+    if (s === 'none') return;
+    var changed = prev ? s !== prev : s !== catLast.s;
+    if (changed || now - (catLast.at || 0) > 10 * 60 * 1000) {
+      catPopShow(s, changed ? (prev || catLast.s) : null);
+      catLast = { s: s, at: now };
+      try { localStorage.setItem(CAT_KEY, JSON.stringify(catLast)); } catch (e) {}
+    }
+    renderCat();
+  }
   if (/catpreview/.test(String(location.search) + String(location.hash))) $('#catPrev').hidden = false;
   $('#catPrev').addEventListener('click', function (e) {
     var b = e.target.closest('[data-cat]'); if (!b) return;
     var v = b.getAttribute('data-cat');
     if (v === 'yay') { catCheer(); return; }
+    if (v === 'pop') { var st = catState(); catPopShow(st === 'none' ? 'gold' : st, null); return; }
     catForced = v || null; renderCat();
   });
 
@@ -1961,11 +2039,11 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   window.addEventListener('resize', function () { sizeSheet(); autosize(); });
 
   document.addEventListener('focusin', function (e) {
-    if (isText(e.target)) document.body.classList.add('typing');
+    if (isText(e.target)) { if (!document.body.classList.contains('typing') && !$('#v-write').hidden && typeof catEnergy === 'function') catBefore = catEnergy(); document.body.classList.add('typing'); }
   });
   document.addEventListener('focusout', function () {
     setTimeout(function () {
-      if (!isText(document.activeElement)) { document.body.classList.remove('typing'); sizeSheet(); autosize(); }
+      if (!isText(document.activeElement)) { document.body.classList.remove('typing'); sizeSheet(); autosize(); if (!$('#v-write').hidden && typeof catSessionEnd === 'function') catSessionEnd(); }
     }, 150);
   });
   $('#doneBtn').addEventListener('click', function () {
