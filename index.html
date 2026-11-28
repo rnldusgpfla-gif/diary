@@ -166,9 +166,6 @@ body.typing .done{display:inline-flex;align-items:center}
 .title{width:100%;-webkit-appearance:none;appearance:none;border:0;border-radius:0;background:transparent;color:var(--ink);font-family:var(--w-font);font-weight:var(--w-tw);font-size:var(--w-size);letter-spacing:var(--w-track);line-height:1.6;padding:0}
 .title::placeholder,.paper::placeholder{color:var(--ink-soft);opacity:1;font-weight:400}
 .paper{display:block;width:100%;flex:1 1 auto;min-height:240px;border:0;border-radius:0;resize:none;overflow:hidden;background-color:transparent;color:var(--ink);font-family:var(--w-font);font-weight:400;font-size:var(--w-size);letter-spacing:var(--w-track);line-height:var(--w-lh);padding:0}
-.pat-lines{background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--rule) 0);background-size:100% var(--w-lh)}
-.pat-dots{background-image:radial-gradient(circle at 50% 100%,var(--hair) 1.2px,transparent 1.7px);background-size:var(--w-lh) var(--w-lh)}
-.pat-grid{background-image:linear-gradient(to bottom,transparent calc(100% - 1px),var(--rule) 0),linear-gradient(to right,transparent calc(100% - 1px),var(--rule) 0);background-size:var(--w-lh) var(--w-lh)}
 .state{font-size:12px;color:var(--ink-soft);min-height:18px;font-variant-numeric:tabular-nums}
 /* stationery: a picture sheet behind title and body. Text colours are set per sheet so it reads in any theme. "slice" keeps the top and bottom decorations undistorted and only stretches the quiet middle band; "fit" stretches the whole picture evenly (for lined or framed sheets). */
 .sheet.sx{position:relative;isolation:isolate;overflow:hidden;border-radius:14px;margin-inline:-6px;padding:var(--sx-pt,58px) var(--sx-px,clamp(28px,8.5%,44px)) 12px;--ink:#17150F;--ink-soft:#6B665B;--rule:rgba(23,21,15,.14);--hair:rgba(23,21,15,.3);--sx-chip:rgba(255,255,255,.55)}
@@ -530,9 +527,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <p class="label">종이 색</p>
       <div id="paperList" class="swatches" role="group" aria-label="종이 색"></div>
 
-      <p class="label">종이 무늬</p>
-      <div id="patList" class="chips fill" role="group" aria-label="종이 무늬"></div>
-
       <div class="lab-row">
         <p class="label" style="margin:0">편지지</p>
         <button type="button" class="mini" id="sxOff" hidden>사용 안 함</button>
@@ -587,7 +581,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="bkFile" type="file" accept="application/json,.json" hidden>
       <p class="cap">가져오면 같은 날짜는 더 최근에 고친 쪽이 남아요.</p>
     </div>
-    <p class="about">하루 한 장 · v2.1</p>
+    <p class="about">하루 한 장 · v2.2</p>
     <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
   </section>
 </main>
@@ -670,7 +664,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     charcoal: { label: '차콜', bg: '#1C1C1E' },
     black: { label: '블랙', bg: '#000000' }
   };
-  var PATTERNS = [['none', '없음'], ['lines', '줄'], ['dots', '점'], ['grid', '격자']];
   var AWAY = [[0, '바로'], [60, '1분 뒤'], [300, '5분 뒤']];
 
   function $(s) { return document.querySelector(s); }
@@ -732,7 +725,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   }
 
   /* ---------- writing style and paper ---------- */
-  var prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none' };
+  var prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', sx: 'none' };
 
   /* stationery pictures kept in this page's own storage; tone = colour of the paper, mode = how it is stretched */
   var SX = [
@@ -805,7 +798,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       if (typeof o.track === 'number' && o.track >= -3 && o.track <= 10) prefs.track = Math.round(o.track);
       if (typeof o.lh === 'number' && o.lh >= 14 && o.lh <= 26) prefs.lh = Math.round(o.lh);
       if (PAPERS[o.paper]) prefs.paper = o.paper;
-      if (PATTERNS.some(function (p) { return p[0] === o.pattern; })) prefs.pattern = o.pattern;
       if (typeof o.sx === 'string' && SXMAP[o.sx]) prefs.sx = o.sx;
       if (o.typeSound === true) prefs.typeSound = 'type';
       else if (typeof o.typeSound === 'string' && SOUNDS.some(function (s) { return s[0] === o.typeSound; })) prefs.typeSound = o.typeSound;
@@ -826,11 +818,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     r.style.setProperty('--w-track', (prefs.track / 100) + 'em');
     if (prefs.paper === 'auto') r.removeAttribute('data-paper');
     else r.setAttribute('data-paper', prefs.paper);
-    ['#body', '#pvBody'].forEach(function (sel) {
-      var el = $(sel);
-      el.className = el.className.replace(/\bpat-\w+/g, '').replace(/\s+/g, ' ').trim();
-      if (prefs.pattern !== 'none') el.className += ' pat-' + prefs.pattern;
-    });
     applySheet();
     autosize();
   }
@@ -849,9 +836,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#trackO').textContent = (prefs.track > 0 ? '+' : '') + prefs.track;
     $('#paperList').innerHTML = Object.keys(PAPERS).map(function (k) {
       return '<button type="button" class="sw-b" data-paper="' + k + '" aria-pressed="' + (prefs.paper === k) + '" aria-label="' + PAPERS[k].label + '"><span class="sw" style="background:' + PAPERS[k].bg + '"></span><span class="sw-n">' + PAPERS[k].label + '</span></button>';
-    }).join('');
-    $('#patList').innerHTML = PATTERNS.map(function (p) {
-      return '<button type="button" class="chip filter" data-pat="' + p[0] + '" aria-pressed="' + (prefs.pattern === p[0]) + '">' + p[1] + '</button>';
     }).join('');
     var sxl = $('#sxList');
     if (!sxl.childElementCount) {
@@ -1911,12 +1895,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     prefs.paper = b.getAttribute('data-paper');
     savePrefs(); applyPrefs(); renderLook();
   });
-  $('#patList').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-pat]');
-    if (!b) return;
-    prefs.pattern = b.getAttribute('data-pat');
-    savePrefs(); applyPrefs(); renderLook();
-  });
   $('#sxList').addEventListener('click', function (e) {
     var b = e.target.closest('[data-sx]');
     if (!b) return;
@@ -1929,7 +1907,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     savePrefs(); applyPrefs(); renderLook();
   });
   $('#resetLook').addEventListener('click', function () {
-    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', pattern: 'none', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound, start: prefs.start };
+    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound, start: prefs.start };
     savePrefs(); applyPrefs(); renderLook();
     toast('기본값으로 되돌렸어요');
   });
