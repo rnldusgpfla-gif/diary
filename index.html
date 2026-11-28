@@ -168,15 +168,6 @@ body.typing .done{display:inline-flex;align-items:center}
 .paper{display:block;width:100%;flex:1 1 auto;min-height:240px;border:0;border-radius:0;resize:none;overflow:hidden;background-color:transparent;color:var(--ink);font-family:var(--w-font);font-weight:400;font-size:var(--w-size);letter-spacing:var(--w-track);line-height:var(--w-lh);padding:0}
 .state{font-size:12px;color:var(--ink-soft);min-height:18px;font-variant-numeric:tabular-nums}
 /* stationery: a picture sheet behind title and body. Text colours are set per sheet so it reads in any theme. "slice" keeps the top and bottom decorations undistorted and only stretches the quiet middle band; "fit" stretches the whole picture evenly (for lined or framed sheets). */
-.sheet.sx{position:relative;isolation:isolate;overflow:hidden;border-radius:14px;margin-inline:-6px;padding:var(--sx-pt,58px) var(--sx-px,clamp(28px,8.5%,44px)) 12px;--ink:#17150F;--ink-soft:#6B665B;--rule:rgba(23,21,15,.14);--hair:rgba(23,21,15,.3);--sx-chip:rgba(255,255,255,.55)}
-.sheet.sx[data-tone="dark"]{--ink:#F5F2EA;--ink-soft:#CFCBC0;--rule:rgba(245,242,234,.22);--hair:rgba(245,242,234,.4);--sx-chip:rgba(0,0,0,.35)}
-.sheet.sx .state:not(:empty){align-self:flex-start;padding:1px 9px;border-radius:999px;background:var(--sx-chip)}
-.sheet.sx::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:var(--sx-img) center/100% 100% no-repeat}
-.sheet.sx[data-mode="slice"]::before{background:none;border-style:solid;border-color:transparent;border-width:var(--sx-et,30vw) 0 var(--sx-eb,30vw) 0;border-image-source:var(--sx-img);border-image-slice:var(--sx-st,36%) 0 var(--sx-sb,36%) 0 fill;border-image-width:var(--sx-et,30vw) 0 var(--sx-eb,30vw) 0;border-image-repeat:stretch}
-.sx-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.sx-b{display:block;aspect-ratio:3/4;border-radius:8px;overflow:hidden;background:var(--paper)}
-.sx-b img{display:block;width:100%;height:100%;object-fit:cover}
-.sx-b[aria-pressed="true"]{box-shadow:0 0 0 2px var(--surface),0 0 0 3.5px var(--ink)}
 .label{font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:10px}
 .photos{display:flex;flex-wrap:wrap;gap:12px}
 .ph{position:relative;width:84px;height:84px}
@@ -269,6 +260,15 @@ body.typing .done{display:inline-flex;align-items:center}
 .fill{align-self:stretch}
 .pill{display:inline-flex;align-items:center;font-size:12px;font-weight:500;background:var(--paper-2);color:var(--ink-soft);border-radius:999px;padding:2px 10px}
 .about{font-size:12px;color:var(--ink-soft);text-align:center}
+.mic[aria-pressed="true"]{background:var(--danger);border-color:var(--danger);color:#fff;animation:micp 1.4s ease-in-out infinite}
+@keyframes micp{50%{box-shadow:0 0 0 6px color-mix(in srgb,var(--danger) 25%,transparent)}}
+@media (prefers-reduced-motion: reduce){.mic[aria-pressed="true"]{animation:none}}
+.note-acts2{display:flex;align-items:center;gap:8px}
+.fab{position:fixed;z-index:20;top:50%;right:max(16px,calc((100vw - 520px) / 2 + 16px),calc(env(safe-area-inset-right,0px) + 12px));transform:translateY(-50%);width:54px;height:54px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.fab:active{transform:translateY(-50%) scale(.94)}
+@media (orientation: landscape) and (max-height: 540px){.fab{right:max(20px,calc(env(safe-area-inset-right,0px) + 12px))}}
+.made{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--ink-soft);text-align:center;margin-top:-8px}
+.made-co{font-size:12px;font-weight:600;color:var(--ink)}
 /* settings list */
 .smain,.spage{display:flex;flex-direction:column;gap:24px}
 .spage{gap:16px}
@@ -381,6 +381,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         <time id="dateStamp" class="stamp"></time>
         <button type="button" class="step" id="prevDay" aria-label="전날로 가기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M14.5 6 8.5 12l6 6"/></svg></button>
         <button type="button" class="step" id="nextDay" aria-label="다음날로 가기"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ti" d="M9.5 6l6 6-6 6"/></svg></button>
+        <button type="button" class="step mic" id="micBody" aria-label="말로 받아쓰기" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M12 3.5a2.8 2.8 0 0 1 2.8 2.8v5.4a2.8 2.8 0 0 1-5.6 0V6.3A2.8 2.8 0 0 1 12 3.5zM6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v3.5"/></svg></button>
         <button type="button" class="done" id="doneBtn">완료</button>
       </div>
       <div class="subline">
@@ -442,7 +443,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <textarea id="noteInput" class="note-in" rows="2" spellcheck="false" placeholder="떠오른 생각을 그냥 적어 두세요"></textarea>
       <div class="note-bar">
         <span class="cap">남기면 지금 시각이 같이 적혀요</span>
-        <button type="submit" class="note-save" id="noteSave" disabled>남기기</button>
+        <span class="note-acts2"><button type="button" class="step mic" id="micNote" aria-label="말로 받아쓰기" aria-pressed="false" hidden><svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path class="ti" d="M12 3.5a2.8 2.8 0 0 1 2.8 2.8v5.4a2.8 2.8 0 0 1-5.6 0V6.3A2.8 2.8 0 0 1 12 3.5zM6.5 11.5a5.5 5.5 0 0 0 11 0M12 17v3.5"/></svg></button>
+        <button type="submit" class="note-save" id="noteSave" disabled>남기기</button></span>
       </div>
     </form>
     <div id="noteFeed" class="note-feed"></div>
@@ -465,6 +467,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       <input id="q" class="input" style="width:100%" type="search" spellcheck="false" placeholder="내용, 태그 검색" autocomplete="off">
     </div>
     <div id="filters" class="filters" role="group" aria-label="태그로 거르기"></div>
+    <button type="button" class="fab" id="fabWrite" aria-label="오늘 일기 쓰기"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path class="ti" d="M12 5v14M5 12h14"/></svg></button>
     <div>
       <p id="count" class="state"></p>
       <div id="list" class="list"></div>
@@ -504,8 +507,9 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
         </div>
       </div>
 
-      <p class="about">하루 한 장 · v2.3</p>
+      <p class="about">하루 한 장 · v2.4</p>
       <p class="credit">서체 저작권은 각 제작처에 있어요. 조선일보(조선일보명조·조선신명조·조선굴림), 방일영문화재단(조선100년체), 경주시(신라문화체), 부산광역시(부산단디고딕, 공공누리 1유형), 얼리폰트(오이냉체), 그리운X묘은(묘은또박체), 초록우산·윤디자인그룹(윤초록우산어린이 만세), 류양희(고운돋움·고운바탕), G마켓(G마켓산스), 길형진(둥근모꼴+·프리텐다드), 페이퍼로지. 글꼴은 눈누·프리텐다드가 공개한 웹폰트 주소에서 불러와요. 오이냉체는 웹 사용에 제작사 허락이 필요해요.</p>
+      <p class="made"><span class="made-co">(주)우땅콩</span><span>2026년 11월 2일에 처음 만들었어요 · © 2026 (주)우땅콩</span></p>
     </div>
 
     <div class="spage" id="sp-font" hidden>
@@ -525,7 +529,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
 
       <div class="slide">
         <div class="slide-h"><label for="sizeR">글자 크기</label><output id="sizeO" for="sizeR"></output></div>
-        <input id="sizeR" type="range" min="16" max="26" step="1">
+        <input id="sizeR" type="range" min="12" max="26" step="1">
       </div>
       <div class="slide">
         <div class="slide-h"><label for="trackR">자간</label><output id="trackO" for="trackR"></output></div>
@@ -544,13 +548,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     <div class="card">
       <p class="label">종이 색</p>
       <div id="paperList" class="swatches" role="group" aria-label="종이 색"></div>
-
-      <div class="lab-row">
-        <p class="label" style="margin:0">편지지</p>
-        <button type="button" class="mini" id="sxOff" hidden>사용 안 함</button>
-      </div>
-      <p class="cap">고르면 쓰는 화면의 종이가 이 그림으로 바뀌어요. 다시 누르면 꺼져요.</p>
-      <div id="sxList" class="sx-grid fill" role="group" aria-label="편지지"></div>
 
       <button type="button" class="btn" id="resetLook">기본값으로 되돌리기</button>
     </div>
@@ -794,66 +791,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   }
 
   /* ---------- writing style and paper ---------- */
-  var prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', sx: 'none' };
-
-  /* stationery pictures kept in this page's own storage; tone = colour of the paper, mode = how it is stretched */
-  var SX = [
-    { id: 'sx01', url: 'images/sx01.jpg', tone: 'light', mode: 'slice', t: 0.351, b: 0.49 },
-    { id: 'sx02', url: 'images/sx02.jpg', tone: 'light', mode: 'slice', t: 0.305, b: 0.536 },
-    { id: 'sx03', url: 'images/sx03.jpg', tone: 'light', mode: 'slice', t: 0.392, b: 0.448 },
-    { id: 'sx04', url: 'images/sx04.jpg', tone: 'dark', mode: 'slice', t: 0.323, b: 0.518, pt: 0.26 },
-    { id: 'sx05', url: 'images/sx05.jpg', tone: 'light', mode: 'slice', t: 0.54, b: 0.301 },
-    { id: 'sx06', url: 'images/sx06.jpg', tone: 'light', mode: 'slice', t: 0.386, b: 0.454 },
-    { id: 'sx07', url: 'images/sx07.jpg', tone: 'light', mode: 'slice', t: 0.396, b: 0.444 },
-    { id: 'sx08', url: 'images/sx08.jpg', tone: 'light', mode: 'fit', px: 0.13 },
-    { id: 'sx09', url: 'images/sx09.jpg', tone: 'light', mode: 'slice', t: 0.472, b: 0.369 },
-    { id: 'sx10', url: 'images/sx10.jpg', tone: 'light', mode: 'slice', t: 0.466, b: 0.375, pt: 0.2 },
-    { id: 'sx11', url: 'images/sx11.jpg', tone: 'light', mode: 'slice', t: 0.418, b: 0.422, pt: 0.26 },
-    { id: 'sx12', url: 'images/sx12.jpg', tone: 'light', mode: 'slice', t: 0.408, b: 0.432 },
-    { id: 'sx13', url: 'images/sx13.jpg', tone: 'light', mode: 'fit' },
-    { id: 'sx14', url: 'images/sx14.jpg', tone: 'light', mode: 'slice', t: 0.38, b: 0.46 },
-    { id: 'sx15', url: 'images/sx15.jpg', tone: 'light', mode: 'slice', t: 0.468, b: 0.373 },
-    { id: 'sx16', url: 'images/sx16.jpg', tone: 'light', mode: 'fit', px: 0.13 }
-  ];
-  var SXMAP = {};
-  SX.forEach(function (s) { SXMAP[s.id] = s; });
-  var SX_RATIO = 502 / 376; /* picture height / width */
-
-  function applySheet() {
-    var sheet = $('#v-write .sheet');
-    if (!sheet) return;
-    var s = SXMAP[prefs.sx];
-    if (!s) {
-      sheet.classList.remove('sx');
-      ['data-tone', 'data-mode'].forEach(function (a) { sheet.removeAttribute(a); });
-      ['--sx-img', '--sx-et', '--sx-eb', '--sx-st', '--sx-sb', '--sx-pt', '--sx-px'].forEach(function (p) { sheet.style.removeProperty(p); });
-      return;
-    }
-    sheet.classList.add('sx');
-    sheet.setAttribute('data-tone', s.tone);
-    sheet.setAttribute('data-mode', s.mode);
-    sheet.style.setProperty('--sx-img', 'url(' + s.url + ')');
-    if (s.mode === 'slice') {
-      sheet.style.setProperty('--sx-st', (s.t * 100).toFixed(1) + '%');
-      sheet.style.setProperty('--sx-sb', (s.b * 100).toFixed(1) + '%');
-    }
-    sheetEdge();
-  }
-  /* sizes that depend on the sheet's width: the undistorted top and bottom bands are the picture's own top and bottom parts as drawn at that width, and the top padding keeps the title clear of big corner pictures */
-  function sheetEdge() {
-    var sheet = $('#v-write .sheet');
-    if (!sheet || !sheet.classList.contains('sx')) return;
-    var s = SXMAP[prefs.sx];
-    var w = sheet.clientWidth;
-    if (!s || w <= 0) return;
-    if (s.mode === 'slice') {
-      sheet.style.setProperty('--sx-et', Math.round(w * SX_RATIO * s.t) + 'px');
-      sheet.style.setProperty('--sx-eb', Math.round(w * SX_RATIO * s.b) + 'px');
-    }
-    sheet.style.setProperty('--sx-pt', Math.max(44, Math.round(w * (s.pt || 0.16))) + 'px');
-    if (s.px) sheet.style.setProperty('--sx-px', Math.round(w * s.px) + 'px');
-    else sheet.style.removeProperty('--sx-px');
-  }
+  var prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto' };
 
   var SOUNDS = [['', '끄기'], ['type', '타자기'], ['pencil', '연필'], ['mech', '기계식 키보드'], ['drop', '물방울'], ['bit', '8비트']];
   function loadPrefs() {
@@ -863,11 +801,10 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
       var o = JSON.parse(raw);
       if (!o || typeof o !== 'object') return;
       if (FONTS[o.font]) prefs.font = o.font;
-      if (typeof o.size === 'number' && o.size >= 10 && o.size <= 26) prefs.size = Math.max(16, Math.round(o.size));
+      if (typeof o.size === 'number' && o.size >= 10 && o.size <= 26) prefs.size = Math.max(12, Math.round(o.size));
       if (typeof o.track === 'number' && o.track >= -3 && o.track <= 10) prefs.track = Math.round(o.track);
       if (typeof o.lh === 'number' && o.lh >= 14 && o.lh <= 26) prefs.lh = Math.round(o.lh);
       if (PAPERS[o.paper]) prefs.paper = o.paper;
-      if (typeof o.sx === 'string' && SXMAP[o.sx]) prefs.sx = o.sx;
       if (o.typeSound === true) prefs.typeSound = 'type';
       else if (typeof o.typeSound === 'string' && SOUNDS.some(function (s) { return s[0] === o.typeSound; })) prefs.typeSound = o.typeSound;
       if (START_TABS.some(function (s) { return s[0] === o.start; })) prefs.start = o.start;
@@ -887,7 +824,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     r.style.setProperty('--w-track', (prefs.track / 100) + 'em');
     if (prefs.paper === 'auto') r.removeAttribute('data-paper');
     else r.setAttribute('data-paper', prefs.paper);
-    applySheet();
     autosize();
   }
   function renderLook() {
@@ -906,16 +842,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     $('#paperList').innerHTML = Object.keys(PAPERS).map(function (k) {
       return '<button type="button" class="sw-b" data-paper="' + k + '" aria-pressed="' + (prefs.paper === k) + '" aria-label="' + PAPERS[k].label + '"><span class="sw" style="background:' + PAPERS[k].bg + '"></span><span class="sw-n">' + PAPERS[k].label + '</span></button>';
     }).join('');
-    var sxl = $('#sxList');
-    if (!sxl.childElementCount) {
-      sxl.innerHTML = SX.map(function (s, i) {
-        return '<button type="button" class="sx-b" data-sx="' + s.id + '" aria-label="편지지 ' + (i + 1) + '"><img src="' + s.url + '" alt="" loading="lazy" decoding="async"></button>';
-      }).join('');
-    }
-    Array.prototype.forEach.call(sxl.children, function (b) {
-      b.setAttribute('aria-pressed', String(b.getAttribute('data-sx') === prefs.sx));
-    });
-    $('#sxOff').hidden = prefs.sx === 'none';
   }
 
   /* ---------- toast ---------- */
@@ -1002,7 +928,6 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   function commitNow() { clearTimeout(timer); return commit(); }
 
   function sizeSheet() {
-    sheetEdge();
     if (document.body.classList.contains('typing')) return;
     var sheet = $('#v-write .sheet');
     if (!sheet || $('#v-write').hidden || $('.app').hidden) return;
@@ -1553,7 +1478,7 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   function renderSetValues() {
     var f = FONTS[prefs.font];
     $('#svFont').textContent = (f ? f.label : '') + ' · ' + prefs.size;
-    $('#svPaper').textContent = prefs.sx && prefs.sx !== 'none' ? '편지지' : (PAPERS[prefs.paper] ? PAPERS[prefs.paper].label : '');
+    $('#svPaper').textContent = PAPERS[prefs.paper] ? PAPERS[prefs.paper].label : '';
     var ft = (prefs.favTags || []).length;
     $('#svTags').textContent = ft ? ft + '개' : '없음';
     $('#svNotion').textContent = $('#notionPill').textContent;
@@ -1566,19 +1491,43 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     if (row) { openSet(row.getAttribute('data-page')); return; }
     if (e.target.closest('.sp-back')) closeSet();
   });
-  /* swipe from the left edge goes back, like other iPhone apps */
+  /* drag left-to-right: on an item's page it goes back to the list, on the list it goes to 모아보기 */
   (function () {
-    var sx = null, sy = 0;
-    $('#v-more').addEventListener('touchstart', function (e) {
-      var t = e.touches[0];
-      sx = (setPage && t.clientX < 40) ? t.clientX : null; sy = t.clientY;
+    var v = $('#v-more'), x0 = 0, y0 = 0, dir = '', dx = 0, pane = null;
+    function cur() { return setPage ? $('#sp-' + setPage) : $('#setMain'); }
+    function blocked(t) { return t.closest && t.closest('input,select,textarea,.slide,.swatches,.toggle,.tabbar,.lock'); }
+    document.addEventListener('touchstart', function (e) {
+      if (v.hidden || e.touches.length !== 1 || blocked(e.target)) { dir = 'no'; return; }
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; dir = ''; dx = 0; pane = cur();
     }, { passive: true });
-    $('#v-more').addEventListener('touchend', function (e) {
-      if (sx === null) return;
-      var t = e.changedTouches[0];
-      if (t.clientX - sx > 70 && Math.abs(t.clientY - sy) < 60) closeSet();
-      sx = null;
+    document.addEventListener('touchmove', function (e) {
+      if (dir === 'no' || !pane) return;
+      var t = e.touches[0], mx = t.clientX - x0, my = t.clientY - y0;
+      if (!dir) {
+        if (Math.abs(mx) < 10 && Math.abs(my) < 10) return;
+        dir = (mx > 0 && Math.abs(mx) > Math.abs(my) * 1.4) ? 'x' : 'no';
+        if (dir === 'x') pane.style.transition = 'none';
+      }
+      if (dir !== 'x') return;
+      dx = Math.max(0, mx);
+      pane.style.transform = 'translateX(' + dx + 'px)';
+      pane.style.opacity = String(Math.max(.4, 1 - dx / 600));
     }, { passive: true });
+    function end() {
+      if (dir !== 'x' || !pane) { dir = ''; return; }
+      var p = pane, go = dx > Math.min(110, window.innerWidth * 0.28);
+      dir = ''; pane = null;
+      p.style.transition = 'transform .18s ease, opacity .18s ease';
+      if (go) {
+        p.style.transform = 'translateX(' + window.innerWidth + 'px)'; p.style.opacity = '0';
+        setTimeout(function () {
+          p.style.transition = 'none'; p.style.transform = ''; p.style.opacity = '';
+          if (setPage) closeSet(); else setTab('archive');
+        }, 170);
+      } else { p.style.transform = ''; p.style.opacity = ''; }
+    }
+    document.addEventListener('touchend', end, { passive: true });
+    document.addEventListener('touchcancel', end, { passive: true });
   })();
   if (window.MutationObserver) new MutationObserver(function () { $('#svNotion').textContent = $('#notionPill').textContent; }).observe($('#notionPill'), { childList: true, characterData: true, subtree: true });
 
@@ -2008,19 +1957,8 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
     prefs.paper = b.getAttribute('data-paper');
     savePrefs(); applyPrefs(); renderLook();
   });
-  $('#sxList').addEventListener('click', function (e) {
-    var b = e.target.closest('[data-sx]');
-    if (!b) return;
-    var k = b.getAttribute('data-sx');
-    prefs.sx = prefs.sx === k ? 'none' : k;
-    savePrefs(); applyPrefs(); renderLook();
-  });
-  $('#sxOff').addEventListener('click', function () {
-    prefs.sx = 'none';
-    savePrefs(); applyPrefs(); renderLook();
-  });
   $('#resetLook').addEventListener('click', function () {
-    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', sx: 'none', favTags: prefs.favTags, typeSound: prefs.typeSound, start: prefs.start };
+    prefs = { font: 'pretendard', size: 18, track: 0, lh: 20, paper: 'auto', favTags: prefs.favTags, typeSound: prefs.typeSound, start: prefs.start };
     savePrefs(); applyPrefs(); renderLook();
     toast('기본값으로 되돌렸어요');
   });
@@ -2396,6 +2334,56 @@ body.typing .tabbar{visibility:hidden;transform:translateY(110%)}
   var IN_CLAUDE = !!(window.claude && window.claude.use);
   $('#bkSave').hidden = IN_CLAUDE;
   $('#bkOpen').hidden = IN_CLAUDE;
+  $('#fabWrite').addEventListener('click', function () { openWrite(todayKey()); });
+
+  /* ---------- 받아쓰기: speak instead of typing (Safari's own speech recognition) ---------- */
+  (function () {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR || IN_CLAUDE) return;                               /* the claude.ai frame has no microphone */
+    var rec = null, btn = null, el = null, pre = '', post = '', fin = '', stopAsked = false;
+    function setOn(b, on) { b.setAttribute('aria-pressed', String(on)); b.setAttribute('aria-label', on ? '받아쓰기 멈추기' : '말로 받아쓰기'); }
+    function stop() { stopAsked = true; if (rec) try { rec.stop(); } catch (e) {} }
+    function start(b, target) {
+      if (rec) { var same = b === btn; stop(); if (same) return; }
+      btn = b; el = target; stopAsked = false; fin = '';
+      var s = el.selectionStart == null ? el.value.length : el.selectionStart, e2 = el.selectionEnd == null ? s : el.selectionEnd;
+      pre = el.value.slice(0, s); post = el.value.slice(e2);
+      if (pre && !/\s$/.test(pre)) pre += ' ';
+      rec = new SR();
+      rec.lang = 'ko-KR'; rec.interimResults = true; rec.continuous = true;
+      rec.onresult = function (ev) {
+        var interim = '';
+        for (var i = ev.resultIndex; i < ev.results.length; i++) {
+          var t = ev.results[i][0].transcript;
+          if (ev.results[i].isFinal) fin += t; else interim += t;
+        }
+        var mid = fin + interim;
+        el.value = pre + mid + post;
+        var c = (pre + mid).length;
+        try { el.setSelectionRange(c, c); } catch (x) {}
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+      };
+      rec.onerror = function (ev) {
+        if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') toast('마이크를 쓸 수 없어요. 키보드의 마이크 버튼으로 받아쓰기 해 보세요.');
+        else if (ev.error === 'no-speech') toast('말소리가 들리지 않았어요');
+        else if (ev.error !== 'aborted') toast('받아쓰기가 멈췄어요');
+      };
+      rec.onend = function () {
+        var b2 = btn, done = rec; rec = null; btn = null;
+        if (b2) setOn(b2, false);
+        if (el) { el.value = pre + fin + post; el.dispatchEvent(new Event('input', { bubbles: true })); }
+      };
+      try { rec.start(); setOn(b, true); toast('듣고 있어요. 다시 누르면 멈춰요'); }
+      catch (x) { rec = null; btn = null; toast('받아쓰기를 시작하지 못했어요'); }
+    }
+    [['#micBody', '#body'], ['#micNote', '#noteInput']].forEach(function (m) {
+      var b = $(m[0]);
+      b.hidden = false;
+      b.addEventListener('pointerdown', function (e) { e.preventDefault(); });   /* keep the text box focused */
+      b.addEventListener('click', function () { start(b, $(m[1])); });
+    });
+    document.addEventListener('visibilitychange', function () { if (document.hidden) stop(); });
+  })();
   function backupText() {
     var own = {};
     Object.keys(entries).forEach(function (k) { if (!entries[k].sample) own[k] = entries[k]; });
